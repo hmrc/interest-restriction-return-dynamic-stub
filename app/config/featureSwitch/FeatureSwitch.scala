@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ object FeatureSwitch {
 
   val prefix = "features"
 
-  val switches: Seq[FeatureSwitch] = Seq(UseStaticCannedResponse)
+  val switches: Seq[FeatureSwitch] = Seq(UseStaticCannedResponse, UseTimeBasedCannedResponse)
   val booleanFeatureSwitches: Seq[BooleanFeatureSwitch] = switches.collect{case a: BooleanFeatureSwitch => a}
   val customValueFeatureSwitch: Seq[CustomValueFeatureSwitch] = switches.collect{case a: CustomValueFeatureSwitch => a}
 
@@ -47,4 +47,8 @@ sealed trait CustomValueFeatureSwitch extends FeatureSwitch {
 
 case object UseStaticCannedResponse extends BooleanFeatureSwitch {
   override val name: String = s"$prefix.useStaticCannedResponse"
+}
+
+case object UseTimeBasedCannedResponse extends BooleanFeatureSwitch {
+  override val name: String = s"$prefix.useTimeBasedCannedResponse"
 }

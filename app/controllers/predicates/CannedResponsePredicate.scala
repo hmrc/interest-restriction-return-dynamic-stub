@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,9 @@
 package controllers.predicates
 
 import config.AppConfig
-import config.featureSwitch.{FeatureSwitching, UseStaticCannedResponse}
+import config.featureSwitch.{FeatureSwitching, UseStaticCannedResponse, UseTimeBasedCannedResponse}
 import javax.inject.Inject
+import org.joda.time.{DateTime,DateTimeZone}
 import play.api.libs.json.Json
 import play.api.mvc.Results.Ok
 import play.api.mvc._
@@ -30,6 +31,9 @@ class CannedResponsePredicate @Inject()(implicit appConfig: AppConfig) extends F
   def apply(f: => Future[Result]): Future[Result] = {
     if(isEnabled(UseStaticCannedResponse)) {
       Future.successful(Ok(Json.obj("acknowledgementReference" -> "ackRef1234")))
+    } else if(isEnabled(UseTimeBasedCannedResponse)) {
+      val now = DateTime.now(DateTimeZone.UTC).getMillis()
+      Future.successful(Ok(Json.obj("acknowledgementReference" -> now.toString)))
     } else {
       f
     }
