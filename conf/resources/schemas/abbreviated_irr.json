@@ -2,6 +2,9 @@
 	"type": "object",
 	"additionalProperties": false,
 	"properties": {
+	    "declaration": {
+      		"type": "boolean"
+    	},
 		"agentDetails": {
 			"description": "Required.",
 			"type": "object",
@@ -167,7 +170,8 @@
 					"type": "object",
 					"additionalProperties": false,
 					"required": [
-						"isElected"
+						"isElected",
+						"activeGroupEBITDAChargeableGains"
 					],
 					"properties": {
 						"isElected": {
@@ -223,10 +227,17 @@
 						"groupEBITDAChargeableGains": {
 							"description": "Optional.",
 							"type": "boolean"
+						},
+						"activeGroupEBITDAChargeableGains": {
+							"type": "boolean"
 						}
 					}
 				},
 				"interestAllowanceAlternativeCalculation": {
+					"description": "Required.",
+					"type": "boolean"
+				},
+				"activeInterestAllowanceAlternativeCalculation": {
 					"description": "Required.",
 					"type": "boolean"
 				},
@@ -266,10 +277,14 @@
 					"type": "object",
 					"additionalProperties": false,
 					"required": [
-						"isElected"
+						"isElected",
+						"isActive"
 					],
 					"properties": {
 						"isElected": {
+							"type": "boolean"
+						},
+						"isActive": {
 							"type": "boolean"
 						},
 						"consolidatedPartnerships": {
@@ -298,12 +313,19 @@
 			"required": [
 				"groupRatio",
 				"interestAllowanceAlternativeCalculation",
+				"activeInterestAllowanceAlternativeCalculation",
 				"interestAllowanceNonConsolidatedInvestment",
 				"interestAllowanceConsolidatedPartnership"
 			]
-		}
+		},
+	    "numberOfUkCompanies": {
+	      "description": "Number of UK Companies",
+	      "type": "integer",
+	      "minimum": 1
+	    }
 	},
 	"required": [
+		"declaration",
 		"agentDetails",
 		"reportingCompany",
 		"publicInfrastructure",

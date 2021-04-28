@@ -2,6 +2,9 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
+    "declaration": {
+      "type": "boolean"
+    },
     "agentDetails": {
       "description": "Required. If the agent is acting on behalf of the reporting company then the agent's name should be provided",
       "type": "object",
@@ -157,6 +160,7 @@
       "required": [
         "groupRatio",
         "interestAllowanceAlternativeCalculation",
+        "activeInterestAllowanceAlternativeCalculation",
         "interestAllowanceNonConsolidatedInvestment",
         "interestAllowanceConsolidatedPartnership"
       ],
@@ -166,7 +170,8 @@
           "type": "object",
           "additionalProperties": false,
           "required": [
-            "isElected"
+            "isElected",
+            "activeGroupEBITDAChargeableGains"
           ],
           "properties": {
             "isElected": {
@@ -222,10 +227,17 @@
             "groupEBITDAChargeableGains": {
               "description": "Optional.",
               "type": "boolean"
+            },
+            "activeGroupEBITDAChargeableGains": {
+              "type": "boolean"
             }
           }
         },
         "interestAllowanceAlternativeCalculation": {
+          "description": "Required.",
+          "type": "boolean"
+        },
+        "activeInterestAllowanceAlternativeCalculation": {
           "description": "Required.",
           "type": "boolean"
         },
@@ -265,11 +277,15 @@
           "type": "object",
           "additionalProperties": false,
           "required": [
-            "isElected"
+            "isElected",
+            "isActive"
           ],
           "properties": {
             "isElected": {
               "description": "Required.",
+              "type": "boolean"
+            },
+            "isActive": {
               "type": "boolean"
             },
             "consolidatedPartnerships": {
@@ -488,9 +504,34 @@
       "type": "number",
       "minimum": 0,
       "multipleOf": 0.01
+    },
+    "numberOfUkCompanies": {
+      "description": "Number of UK Companies",
+      "type": "integer",
+      "minimum": 1
+    },
+    "aggregateNetTaxInterest": {
+      "description": "Aggregate Net Tax Interest of UK Companies",
+      "type": "number"
+    },
+    "aggregateTaxEBITDA": {
+      "description": "Aggregate Tax EBITDA of UK Companies",
+      "type": "number",
+      "minimum": 0
+    },
+    "aggregateAllocatedRestrictions": {
+      "description": "Optional. Aggregate Net Tax Interest of UK Companies",
+      "type": "number",
+      "minimum": 0
+    },
+    "aggregateAllocatedReactivations": {
+      "description": "Optional. Aggregate Tax EBITDA of UK Companies",
+      "type": "number",
+      "minimum": 0
     }
   },
   "required": [
+    "declaration",
     "agentDetails",
     "reportingCompany",
     "publicInfrastructure",
