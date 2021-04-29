@@ -1,4 +1,5 @@
 {
+    "declaration": true,
     "agentDetails": {
       "agentActingOnBehalfOfCompany": true,
       "agentName": "Some agent"
@@ -37,8 +38,10 @@
     "groupSubjectToInterestReactivation": true,
     "revisedReturnDifferences": "≈ ≤≥",
     "groupLevelElections": {
+      "activeInterestAllowanceAlternativeCalculation": true,
       "groupRatio": {
         "isElected": true,
+        "activeGroupEBITDAChargeableGains": true,
         "groupRatioBlended": {
           "isElected": true,
           "investorGroups": [
@@ -77,6 +80,7 @@
       },
       "interestAllowanceConsolidatedPartnership": {
         "isElected": true,
+        "isActive": true,
         "consolidatedPartnerships": [
           {
             "partnershipName": "Öbs",
