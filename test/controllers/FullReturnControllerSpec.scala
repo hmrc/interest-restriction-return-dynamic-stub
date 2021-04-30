@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,8 @@ import actions.AuthenticatedAction
 import play.api.mvc.BodyParsers
 import models.{ErrorResponse, FailureMessage}
 import config._
+import java.util.UUID
+import scala.util.Try
 
 class FullReturnControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite {
 
@@ -101,7 +103,7 @@ class FullReturnControllerSpec extends AnyWordSpec with Matchers with GuiceOneAp
 
       val result = controller.fullReturn()(fakeRequest)
 
-      (contentAsJson(result) \ "acknowledgementReference").as[String] shouldBe "1234"
+      Try((contentAsJson(result) \ "acknowledgementReference").as[UUID]) should be a 'success
     }
 
     "returns a 500 when a ServerError agent name is passed" in {
