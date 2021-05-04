@@ -1,4 +1,5 @@
 {
+  "declaration": true,
   "agentDetails": {
     "agentActingOnBehalfOfCompany": true,
     "agentName": "Some agent"
@@ -31,7 +32,9 @@
   "revisedReturnDetails": "Calculation symbols and formulae y=x,  73463784 ÷ (839393987 + 73678979)",
   "angie": 0.01,
   "groupLevelElections": {
+    "activeInterestAllowanceAlternativeCalculation": true,
     "groupRatio": {
+      "activeGroupEBITDAChargeableGains": true,
       "isElected": true,
       "groupRatioBlended": {
         "isElected": true,
@@ -67,6 +70,7 @@
     },
     "interestAllowanceConsolidatedPartnership": {
       "isElected": true,
+      "isActive": true,
       "consolidatedPartnerships": [
         {
           "partnershipName": "Öbs",
