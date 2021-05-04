@@ -29,6 +29,8 @@ import actions.AuthenticatedAction
 import play.api.mvc.BodyParsers
 import models.{ErrorResponse, FailureMessage}
 import config._
+import scala.util.Try
+import java.util.UUID
 
 class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite {
 
@@ -103,7 +105,7 @@ class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with Guic
 
       val result = controller.appoint()(fakeRequest)
 
-      (contentAsJson(result) \ "acknowledgementReference").as[String] shouldBe "1234"
+      Try((contentAsJson(result) \ "acknowledgementReference").as[UUID]) should be a 'success
     }
 
     "returns a 500 when a ServerError agent name is passed" in {
@@ -235,7 +237,7 @@ class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with Guic
 
       val result = controller.revoke()(fakeRequest)
 
-      (contentAsJson(result) \ "acknowledgementReference").as[String] shouldBe "1234"
+      Try((contentAsJson(result) \ "acknowledgementReference").as[UUID]) should be a 'success
     }
 
     "returns a 500 when a ServerError agent name is passed" in {

@@ -25,8 +25,8 @@ import play.api.libs.json._
 import play.api.Logging
 import actions.AuthenticatedAction
 import models.{ErrorResponse, FailureMessage}
-import config._
 import scala.concurrent._
+import java.util.UUID.randomUUID
 
 @Singleton()
 class FullReturnController @Inject() (authenticatedAction: AuthenticatedAction, cc: ControllerComponents) extends BackendController(cc) with Logging {
@@ -45,7 +45,8 @@ class FullReturnController @Inject() (authenticatedAction: AuthenticatedAction, 
           case Some("ServiceUnavailable") => ServiceUnavailable(Json.toJson(ErrorResponse(List(FailureMessage.ServiceUnavailable))))
           case Some("Unauthorized") => Unauthorized(Json.toJson(ErrorResponse(List(FailureMessage.Unauthorized))))
           case _ => {
-            val responseString = """{"acknowledgementReference":"1234"}"""
+            val acknowledgementReference = randomUUID().toString
+            val responseString = s"""{"acknowledgementReference":"$acknowledgementReference"}"""
             val responseJson = Json.parse(responseString)
             Created(responseJson)
           }
