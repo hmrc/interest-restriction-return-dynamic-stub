@@ -39,7 +39,7 @@ class FullReturnControllerSpec extends AnyWordSpec with Matchers with GuiceOneAp
 
   implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
   val bodyParsers = app.injector.instanceOf[BodyParsers.Default]
-  val authenticatedAction: AuthenticatedAction = new AuthenticatedAction(bodyParsers)
+  val authenticatedAction: AuthenticatedAction = new AuthenticatedAction(bodyParsers)  
 
   "POST of a full return" should {
     "return 201 when the payload is validated" in {
