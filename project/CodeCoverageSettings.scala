@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2020 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,25 @@
  * limitations under the License.
  */
 
-package config
+import sbt.Setting
+import scoverage.ScoverageKeys
 
-object HeaderKeys {
-  val providerId    = "providerId"
-  val correlationId = "correlationId"
-  val environment   = "environment"
+object CodeCoverageSettings {
+
+  private val excludedPackages: Seq[String] = Seq(
+    "<empty>",
+    "Reverse.*",
+    "uk.gov.hmrc.BuildInfo",
+    "app.*",
+    "prod.*",
+    "testOnly.*",
+    "Routes*"
+  )
+
+  val settings: Seq[Setting[_]] = Seq(
+    ScoverageKeys.coverageExcludedPackages := excludedPackages.mkString(";"),
+    ScoverageKeys.coverageMinimumStmtTotal := 89,
+    ScoverageKeys.coverageFailOnMinimum := true,
+    ScoverageKeys.coverageHighlighting := true
+  )
 }

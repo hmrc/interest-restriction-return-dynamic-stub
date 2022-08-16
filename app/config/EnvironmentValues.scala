@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,11 @@
 
 package config
 
-import javax.inject.{Inject, Singleton}
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+object EnvironmentValues {
+  val environmentIst0  = "ist0"
+  val environmentClone = "clone"
+  val environmentLive  = "live"
+  val environmentDev   = "dev"
 
-@Singleton
-class AppConfig @Inject()(config: Configuration, val servicesConfig: ServicesConfig) {
-
-  val authBaseUrl: String = servicesConfig.baseUrl("auth")
-
-  val auditingEnabled: Boolean = config.get[Boolean]("auditing.enabled")
-  val graphiteHost: String     = config.get[String]("microservice.metrics.graphite.host")
+  val all: Set[String] = Set(environmentIst0, environmentClone, environmentLive, environmentDev)
 }

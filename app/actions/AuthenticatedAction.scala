@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,20 +19,20 @@ package actions
 import com.google.inject.Inject
 import play.api.mvc.Results._
 import play.api.mvc._
-import play.api.http.{HeaderNames}
+import play.api.http.HeaderNames
 
 import scala.concurrent._
 import scala.concurrent.Future
 import models.{ErrorResponse, FailureMessage}
 import play.api.libs.json._
 
-class AuthenticatedAction @Inject()(override val parser: BodyParsers.Default)(implicit override val executionContext: ExecutionContext)
-    extends ActionBuilderImpl(parser) {
+class AuthenticatedAction @Inject() (override val parser: BodyParsers.Default)(implicit
+  override val executionContext: ExecutionContext
+) extends ActionBuilderImpl(parser) {
 
-  override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]) : Future[Result] = {
+  override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] =
     request.headers.get(HeaderNames.AUTHORIZATION) match {
-      case None => Future.successful(Unauthorized(Json.toJson(ErrorResponse(List(FailureMessage.MissingBearerToken)))))
+      case None    => Future.successful(Unauthorized(Json.toJson(ErrorResponse(List(FailureMessage.MissingBearerToken)))))
       case Some(_) => block(request)
     }
-  }
 }

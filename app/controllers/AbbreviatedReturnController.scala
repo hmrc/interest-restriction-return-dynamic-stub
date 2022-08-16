@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,9 @@ import scala.concurrent._
 import java.util.UUID.randomUUID
 
 @Singleton()
-class AbbreviatedReturnController @Inject()(authenticatedAction: AuthenticatedAction, cc: ControllerComponents) extends BackendController(cc) with Logging {
+class AbbreviatedReturnController @Inject() (authenticatedAction: AuthenticatedAction, cc: ControllerComponents)
+    extends BackendController(cc)
+    with Logging {
 
   implicit val ec: ExecutionContext = cc.executionContext
 
@@ -43,15 +45,15 @@ class AbbreviatedReturnController @Inject()(authenticatedAction: AuthenticatedAc
         val agentName = jsonBody.flatMap(body => (body \ "agentDetails" \ "agentName").asOpt[String])
 
         val response = agentName match {
-          case Some("ServerError") => InternalServerError(Json.toJson(ErrorResponse(List(FailureMessage.ServerError))))
-          case Some("ServiceUnavailable") => ServiceUnavailable(Json.toJson(ErrorResponse(List(FailureMessage.ServiceUnavailable))))
-          case Some("Unauthorized") => Unauthorized(Json.toJson(ErrorResponse(List(FailureMessage.Unauthorized))))
-          case _ => {
+          case Some("ServerError")        => InternalServerError(Json.toJson(ErrorResponse(List(FailureMessage.ServerError))))
+          case Some("ServiceUnavailable") =>
+            ServiceUnavailable(Json.toJson(ErrorResponse(List(FailureMessage.ServiceUnavailable))))
+          case Some("Unauthorized")       => Unauthorized(Json.toJson(ErrorResponse(List(FailureMessage.Unauthorized))))
+          case _                          =>
             val acknowledgementReference = randomUUID().toString
-            val responseString = s"""{"acknowledgementReference":"$acknowledgementReference"}"""
-            val responseJson = Json.parse(responseString)
+            val responseString           = s"""{"acknowledgementReference":"$acknowledgementReference"}"""
+            val responseJson             = Json.parse(responseString)
             Created(responseJson)
-          }
         }
 
         Future.successful(response)
