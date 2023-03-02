@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -107,7 +107,7 @@ class AbbreviatedReturnControllerSpec extends AnyWordSpec with Matchers with Gui
       val fakeRequest = FakeRequestWithHeaders.withJsonBody(exampleJsonBody)
       val controller  = new AbbreviatedReturnController(authenticatedAction, Helpers.stubControllerComponents())
       val result      = controller.abbreviation()(fakeRequest)
-      Try((contentAsJson(result) \ "acknowledgementReference").as[UUID]) should be a 'success
+      Try((contentAsJson(result) \ "acknowledgementReference").as[UUID]) should be a Symbol("success")
     }
 
     "returns a 500 when a ServerError agent name is passed" in {
