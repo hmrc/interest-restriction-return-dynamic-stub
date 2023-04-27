@@ -21,7 +21,6 @@ import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import scala.concurrent.Future
 import play.api.libs.json.{JsValue, Json}
-import play.api.libs.json._
 import play.api.Logging
 import actions.AuthenticatedAction
 import models.{ErrorResponse, FailureMessage}
