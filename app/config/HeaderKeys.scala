@@ -17,7 +17,6 @@
 package config
 
 object HeaderKeys {
-  val providerId    = "providerId"
   val correlationId = "correlationId"
   val environment   = "environment"
 }
