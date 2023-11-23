@@ -6,7 +6,7 @@ lazy val microservice = Project(appName, file("."))
     // To resolve a bug with version 2.x.x of the scoverage plugin - https://github.com/sbt/sbt/issues/6997
     libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
     majorVersion := 0,
-    scalaVersion := "2.13.10",
+    scalaVersion := "2.13.12",
     libraryDependencies ++= AppDependencies(),
     PlayKeys.playDefaultPort := 9262,
     scalacOptions ++= Seq("-feature", "-Wconf:src=routes/.*:s")
