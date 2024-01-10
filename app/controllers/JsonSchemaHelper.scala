@@ -39,7 +39,7 @@ object JsonSchemaHelper extends Logging {
   private final lazy val correlationIdRegex =
     "^[0-9a-fA-F]{8}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{12}$"
 
-  def loadRequestSchema(requestSchema: JsValue): JsonSchema = {
+  private def loadRequestSchema(requestSchema: JsValue): JsonSchema = {
     val schemaMapper             = new ObjectMapper()
     val factory                  = schemaMapper.getFactory
     val schemaParser: JsonParser = factory.createParser(requestSchema.toString)
@@ -47,7 +47,7 @@ object JsonSchemaHelper extends Logging {
     JsonSchemaFactory.byDefault().getJsonSchema(schemaJson)
   }
 
-  def validRequest(jsonSchema: JsValue, json: Option[JsValue]): Option[ProcessingReport] =
+  private def validRequest(jsonSchema: JsValue, json: Option[JsValue]): Option[ProcessingReport] =
     json.map { response =>
       val jsonParser               = jsonFactory.createParser(response.toString)
       val jsonNode: JsonNode       = jsonMapper.readTree(jsonParser)
@@ -71,7 +71,7 @@ object JsonSchemaHelper extends Logging {
         Future.successful(InternalServerError(""))
     }
 
-  def retrieveJsonSchema(schemaPath: String): Try[JsValue] = {
+  private def retrieveJsonSchema(schemaPath: String): Try[JsValue] = {
     val jsonSchema = Try(Source.fromInputStream(getClass.getResourceAsStream(schemaPath)).mkString)
     jsonSchema.map(Json.parse)
   }
@@ -92,16 +92,16 @@ object JsonSchemaHelper extends Logging {
 
     maybeEnvironment match {
       case Some(environment) if isValidEnvironment(environment) => correlationIdResult
-      case Some(environment)                                    =>
+      case Some(_)                                              =>
         Future.successful(BadRequest(Json.toJson(ErrorResponse(List(FailureMessage.InvalidEnvironment)))))
       case _                                                    => correlationIdResult
     }
 
   }
 
-  def isValidEnvironment(environment: String): Boolean =
+  private def isValidEnvironment(environment: String): Boolean =
     EnvironmentValues.all.contains(environment)
 
-  def isValidCorrelationId(correlationId: String): Boolean =
+  private def isValidCorrelationId(correlationId: String): Boolean =
     correlationId.matches(correlationIdRegex)
 }

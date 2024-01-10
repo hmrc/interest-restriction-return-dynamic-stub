@@ -17,10 +17,10 @@
 package config
 
 object EnvironmentValues {
-  val environmentIst0  = "ist0"
-  val environmentClone = "clone"
-  val environmentLive  = "live"
-  val environmentDev   = "dev"
+  private val environmentIst0  = "ist0"
+  private val environmentClone = "clone"
+  private val environmentLive  = "live"
+  val environmentDev           = "dev"
 
   val all: Set[String] = Set(environmentIst0, environmentClone, environmentLive, environmentDev)
 }
