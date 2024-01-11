@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@
 package config
 
 object EnvironmentValues {
-  val environmentIst0  = "ist0"
-  val environmentClone = "clone"
-  val environmentLive  = "live"
-  val environmentDev   = "dev"
+  private val environmentIst0  = "ist0"
+  private val environmentClone = "clone"
+  private val environmentLive  = "live"
+  val environmentDev           = "dev"
 
   val all: Set[String] = Set(environmentIst0, environmentClone, environmentLive, environmentDev)
 }
