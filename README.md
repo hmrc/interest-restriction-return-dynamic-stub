@@ -3,6 +3,11 @@
 
 This is a protected backend microservice that stubs the functionality of the HMRC HoD systems API for Interest Restriction Returns.
 
+## Running the tests
+```bash
+./run_all_tests.sh
+```
+
 ## API Endpoint Definitions
 
 **Manage the Reporting Company for the Interest Restriction Return filing**
