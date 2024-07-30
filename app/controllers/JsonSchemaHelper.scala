@@ -16,20 +16,20 @@
 
 package controllers
 
-import com.github.fge.jsonschema.core.report.ProcessingReport
-import com.github.fge.jsonschema.main.{JsonSchema, JsonSchemaFactory}
-import play.api.libs.json.{JsValue, Json}
+import com.fasterxml.jackson.core.{JsonFactory, JsonParser}
 import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
-import com.fasterxml.jackson.core.JsonParser
-import scala.concurrent.Future
-import play.api.Logging
-import play.api.mvc._
-import play.api.mvc.Results._
-import scala.util.{Failure, Success, Try}
-import scala.io.Source
+import com.networknt.schema._
+import config.{EnvironmentValues, HeaderKeys}
 import models.{ErrorResponse, FailureMessage}
-import config._
-import scala.concurrent._
+import play.api.Logging
+import play.api.libs.json.{JsValue, Json}
+import play.api.mvc.{Headers, Result}
+import play.api.mvc.Results.{BadRequest, InternalServerError}
+
+import java.util
+import scala.concurrent.{ExecutionContext, Future}
+import scala.io.Source
+import scala.util.{Failure, Success, Try}
 
 object JsonSchemaHelper extends Logging {
 
@@ -40,31 +40,33 @@ object JsonSchemaHelper extends Logging {
     "^[0-9a-fA-F]{8}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{12}$"
 
   private def loadRequestSchema(requestSchema: JsValue): JsonSchema = {
-    val schemaMapper             = new ObjectMapper()
-    val factory                  = schemaMapper.getFactory
-    val schemaParser: JsonParser = factory.createParser(requestSchema.toString)
-    val schemaJson: JsonNode     = schemaMapper.readTree(schemaParser)
-    JsonSchemaFactory.byDefault().getJsonSchema(schemaJson)
+    val schemaMapper: ObjectMapper           = new ObjectMapper()
+    val factory: JsonFactory                 = schemaMapper.getFactory
+    val schemaParser: JsonParser             = factory.createParser(requestSchema.toString)
+    val schemaJson: JsonNode                 = schemaMapper.readTree(schemaParser)
+    val jsonSchemaFactory: JsonSchemaFactory = JsonSchemaFactory.getInstance(SpecVersionDetector.detect(schemaJson))
+    jsonSchemaFactory.getSchema(schemaJson)
   }
 
-  private def validRequest(jsonSchema: JsValue, json: Option[JsValue]): Option[ProcessingReport] =
+  private def validRequest(jsonSchema: JsValue, json: Option[JsValue]): Option[util.Set[ValidationMessage]] =
     json.map { response =>
-      val jsonParser               = jsonFactory.createParser(response.toString)
-      val jsonNode: JsonNode       = jsonMapper.readTree(jsonParser)
-      val result: ProcessingReport = loadRequestSchema(jsonSchema).validate(jsonNode)
+      val jsonParser: JsonParser              = jsonFactory.createParser(response.toString)
+      val jsonNode: JsonNode                  = jsonMapper.readTree(jsonParser)
+      val result: util.Set[ValidationMessage] = loadRequestSchema(jsonSchema).validate(jsonNode)
+
       result
     }
 
   def applySchemaValidation(schemaPath: String, jsonBody: Option[JsValue])(f: => Future[Result]): Future[Result] =
     retrieveJsonSchema(schemaPath) match {
       case Success(schema) =>
-        val validationResult = JsonSchemaHelper.validRequest(schema, jsonBody)
+        val validationResult: Option[util.Set[ValidationMessage]] = JsonSchemaHelper.validRequest(schema, jsonBody)
         validationResult match {
-          case Some(res) if res.isSuccess => f
-          case Some(res)                  =>
+          case Some(res) if res.isEmpty => f
+          case Some(res)                =>
             logger.info(s"[INTEREST-RESTRICTION-RETURN-DYNAMIC-STUB][VALIDATION-ERROR][${res.toString}]")
             Future.successful(BadRequest(Json.toJson(ErrorResponse(List(FailureMessage.InvalidJson)))))
-          case _                          => Future.successful(BadRequest(Json.toJson(ErrorResponse(List(FailureMessage.MissingBody)))))
+          case _                        => Future.successful(BadRequest(Json.toJson(ErrorResponse(List(FailureMessage.MissingBody)))))
         }
       case Failure(e)      =>
         logger.error(s"Error: ${e.getMessage}", e)
@@ -72,7 +74,7 @@ object JsonSchemaHelper extends Logging {
     }
 
   private def retrieveJsonSchema(schemaPath: String): Try[JsValue] = {
-    val jsonSchema = Try(Source.fromInputStream(getClass.getResourceAsStream(schemaPath)).mkString)
+    val jsonSchema: Try[String] = Try(Source.fromInputStream(getClass.getResourceAsStream(schemaPath)).mkString)
     jsonSchema.map(Json.parse)
   }
 
@@ -82,7 +84,7 @@ object JsonSchemaHelper extends Logging {
     val maybeCorrelationId: Option[String] = headers.get(HeaderKeys.correlationId)
     val maybeEnvironment: Option[String]   = headers.get(HeaderKeys.environment)
 
-    val correlationIdResult = maybeCorrelationId match {
+    val correlationIdResult: Future[Result] = maybeCorrelationId match {
       case Some(correlationId) if isValidCorrelationId(correlationId) =>
         f.map(_.withHeaders(HeaderKeys.correlationId -> correlationId))
       case Some(_)                                                    =>
