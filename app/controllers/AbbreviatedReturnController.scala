@@ -34,7 +34,8 @@ class AbbreviatedReturnController @Inject() (authenticatedAction: AuthenticatedA
 
   implicit val ec: ExecutionContext = cc.executionContext
 
-  def abbreviation(): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def abbreviation(): Action[AnyContent] = authenticatedAction.async { request =>
+    given Request[AnyContent]     = request
     val jsonBody: Option[JsValue] = request.body.asJson
 
     logger.debug(s"Received headers ${request.headers}")

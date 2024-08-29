@@ -14,6 +14,6 @@ object AppDependencies {
     "uk.gov.hmrc" %% "bootstrap-test-play-30" % bootstrapVersion
   ).map(_ % Test)
 
-  def apply(): Seq[ModuleID]           = compile ++ test
+  def apply(): Seq[ModuleID] = compile ++ test
 
 }

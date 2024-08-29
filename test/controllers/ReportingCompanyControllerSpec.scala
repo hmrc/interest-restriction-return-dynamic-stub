@@ -49,9 +49,9 @@ class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with Guic
   val FakeRequestWithHeaders: FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest("POST", "/").withHeaders(HeaderNames.AUTHORIZATION -> "Bearer 1234")
 
-  implicit val ec: scala.concurrent.ExecutionContext              = scala.concurrent.ExecutionContext.global
-  val bodyParsers: BodyParsers.Default                            = app.injector.instanceOf[BodyParsers.Default]
-  val authenticatedAction: AuthenticatedAction                    = new AuthenticatedAction(bodyParsers)
+  implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
+  val bodyParsers: BodyParsers.Default               = app.injector.instanceOf[BodyParsers.Default]
+  val authenticatedAction: AuthenticatedAction       = new AuthenticatedAction(bodyParsers)
 
   "POST appoint irr reporting company" should {
     "return 201 when the payload is validated" in {
