@@ -1,6 +1,6 @@
 val appName = "interest-restriction-return-dynamic-stub"
 
-ThisBuild / scalaVersion := "3.3.3"
+ThisBuild / scalaVersion := "3.4.2"
 ThisBuild / majorVersion := 0
 
 lazy val microservice = Project(appName, file("."))
