@@ -20,12 +20,12 @@ import actions.AuthenticatedAction
 import models.{ErrorResponse, FailureMessage}
 import play.api.Logging
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc._
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import java.util.UUID.randomUUID
 import javax.inject.{Inject, Singleton}
-import scala.concurrent._
+import scala.concurrent.*
 
 @Singleton()
 class AbbreviatedReturnController @Inject() (authenticatedAction: AuthenticatedAction, cc: ControllerComponents)
