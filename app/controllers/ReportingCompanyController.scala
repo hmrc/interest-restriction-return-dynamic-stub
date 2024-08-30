@@ -17,14 +17,14 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-import play.api.mvc.*
+import play.api.mvc._
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import scala.concurrent.Future
 import play.api.libs.json.{JsValue, Json}
 import play.api.Logging
 import actions.AuthenticatedAction
 import models.{ErrorResponse, FailureMessage}
-import scala.concurrent.*
+import scala.concurrent._
 import java.util.UUID.randomUUID
 
 @Singleton()
@@ -32,7 +32,7 @@ class ReportingCompanyController @Inject() (authenticatedAction: AuthenticatedAc
     extends BackendController(cc)
     with Logging {
 
-  implicit val ec: ExecutionContext = cc.executionContext
+  given ec: ExecutionContext = cc.executionContext
 
   def appoint(): Action[AnyContent] = authenticatedAction.async { request =>
     given Request[AnyContent]     = request

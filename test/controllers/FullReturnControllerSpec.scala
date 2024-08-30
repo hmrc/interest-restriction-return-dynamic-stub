@@ -22,13 +22,13 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.{HeaderNames, Status}
 import play.api.libs.json.{JsObject, JsString, JsValue, Json}
 import play.api.test.{FakeRequest, Helpers}
-import play.api.test.Helpers.*
+import play.api.test.Helpers._
 
 import scala.io.{BufferedSource, Source}
 import actions.AuthenticatedAction
 import play.api.mvc.{AnyContentAsEmpty, BodyParsers}
 import models.{ErrorResponse, FailureMessage}
-import config.*
+import config._
 
 import java.util.UUID
 import scala.util.Try
