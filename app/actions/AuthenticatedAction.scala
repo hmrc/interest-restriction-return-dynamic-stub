@@ -26,7 +26,7 @@ import scala.concurrent.Future
 import models.{ErrorResponse, FailureMessage}
 import play.api.libs.json._
 
-class AuthenticatedAction @Inject() (override val parser: BodyParsers.Default)(implicit
+class AuthenticatedAction @Inject() (override val parser: BodyParsers.Default)(using
   override val executionContext: ExecutionContext
 ) extends ActionBuilderImpl(parser) {
 

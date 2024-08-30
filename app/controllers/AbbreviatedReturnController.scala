@@ -20,21 +20,22 @@ import actions.AuthenticatedAction
 import models.{ErrorResponse, FailureMessage}
 import play.api.Logging
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc._
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import java.util.UUID.randomUUID
 import javax.inject.{Inject, Singleton}
-import scala.concurrent._
+import scala.concurrent.*
 
 @Singleton()
 class AbbreviatedReturnController @Inject() (authenticatedAction: AuthenticatedAction, cc: ControllerComponents)
     extends BackendController(cc)
     with Logging {
 
-  implicit val ec: ExecutionContext = cc.executionContext
+  given ec: ExecutionContext = cc.executionContext
 
-  def abbreviation(): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def abbreviation(): Action[AnyContent] = authenticatedAction.async { request =>
+    given Request[AnyContent]     = request
     val jsonBody: Option[JsValue] = request.body.asJson
 
     logger.debug(s"Received headers ${request.headers}")

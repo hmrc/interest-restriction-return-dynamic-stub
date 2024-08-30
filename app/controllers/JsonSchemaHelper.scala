@@ -80,7 +80,7 @@ object JsonSchemaHelper extends Logging {
 
   def applySchemaHeaderValidation(
     headers: Headers
-  )(f: => Future[Result])(implicit ec: ExecutionContext): Future[Result] = {
+  )(f: => Future[Result])(using ec: ExecutionContext): Future[Result] = {
     val maybeCorrelationId: Option[String] = headers.get(HeaderKeys.correlationId)
     val maybeEnvironment: Option[String]   = headers.get(HeaderKeys.environment)
 

@@ -42,9 +42,9 @@ class AbbreviatedReturnControllerSpec extends AnyWordSpec with Matchers with Gui
   val FakeRequestWithHeaders: FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest("POST", "/").withHeaders(HeaderNames.AUTHORIZATION -> "Bearer 1234")
 
-  implicit val ec: scala.concurrent.ExecutionContext              = scala.concurrent.ExecutionContext.global
-  val bodyParsers: BodyParsers.Default                            = app.injector.instanceOf[BodyParsers.Default]
-  val authenticatedAction: AuthenticatedAction                    = new AuthenticatedAction(bodyParsers)
+  given ec: scala.concurrent.ExecutionContext  = scala.concurrent.ExecutionContext.global
+  val bodyParsers: BodyParsers.Default         = app.injector.instanceOf[BodyParsers.Default]
+  val authenticatedAction: AuthenticatedAction = new AuthenticatedAction(bodyParsers)
 
   "POST Abbreviated IRR reporting company" should {
 

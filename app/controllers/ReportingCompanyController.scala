@@ -16,25 +16,28 @@
 
 package controllers
 
-import javax.inject.{Inject, Singleton}
-import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
-import scala.concurrent.Future
-import play.api.libs.json.{JsValue, Json}
-import play.api.Logging
 import actions.AuthenticatedAction
 import models.{ErrorResponse, FailureMessage}
-import scala.concurrent._
+import play.api.Logging
+import play.api.libs.json.{JsValue, Json}
+import play.api.mvc.*
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
+
 import java.util.UUID.randomUUID
+import javax.inject.{Inject, Singleton}
+import scala.concurrent.*
 
 @Singleton()
 class ReportingCompanyController @Inject() (authenticatedAction: AuthenticatedAction, cc: ControllerComponents)
     extends BackendController(cc)
     with Logging {
 
-  implicit val ec: ExecutionContext = cc.executionContext
+  given ec: ExecutionContext = cc.executionContext
 
-  def appoint(): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def appoint(): Action[AnyContent] = authenticatedAction.async { request =>
+
+    given Request[AnyContent] = request
+
     val jsonBody: Option[JsValue] = request.body.asJson
 
     logger.debug(s"Received headers ${request.headers}")
@@ -60,7 +63,9 @@ class ReportingCompanyController @Inject() (authenticatedAction: AuthenticatedAc
     }
   }
 
-  def revoke(): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def revoke(): Action[AnyContent] = authenticatedAction.async { request =>
+    given Request[AnyContent] = request
+
     val jsonBody: Option[JsValue] = request.body.asJson
 
     logger.debug(s"Received headers ${request.headers}")
