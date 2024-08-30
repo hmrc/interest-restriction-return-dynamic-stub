@@ -17,6 +17,7 @@
 package config
 
 object EnvironmentValues {
+
   private val environmentIst0  = "ist0"
   private val environmentClone = "clone"
   private val environmentLive  = "live"

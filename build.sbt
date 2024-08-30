@@ -8,7 +8,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(
     libraryDependencies ++= AppDependencies(),
     PlayKeys.playDefaultPort := 9262,
-    scalacOptions ++= Seq("-feature", "-Wconf:src=routes/.*:s")
+    scalacOptions := scalacOptions.value.diff(Seq("-Wunused:all"))
   )
   .settings(CodeCoverageSettings.settings)
 

@@ -23,11 +23,11 @@ case class ErrorResponse(failures: List[FailureMessage])
 case class FailureMessage(code: String, reason: String)
 
 object ErrorResponse {
-  given reads: OFormat[ErrorResponse] = Json.format[ErrorResponse]
+  given formats: OFormat[ErrorResponse] = Json.format[ErrorResponse]
 }
 
 object FailureMessage {
-  given reads: OFormat[FailureMessage] = Json.format[FailureMessage]
+  given formats: OFormat[FailureMessage] = Json.format[FailureMessage]
 
   val InvalidJson: FailureMessage          =
     FailureMessage("INVALID_PAYLOAD", "Submission has not passed validation. Invalid payload.")
