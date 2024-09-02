@@ -16,9 +16,7 @@
 
 package models
 
-import com.google.gson.JsonObject
 import org.scalatest.matchers.should.Matchers
-import org.scalatest.matchers.should.Matchers.shouldBe
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.json.{JsError, JsObject, Json}
@@ -98,8 +96,7 @@ class ErrorResponseSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSui
 
   "FailureMessage" should {
     "serialise to Json" in {
-      println(json("failures").as[List[FailureMessage]].head)
-      Json.toJson(errorResponse.failures.head) shouldBe json("failures").as[List[FailureMessage]].head
+      Json.toJson(errorResponse.failures.head) shouldBe json("failures").head.get
     }
 
     "to deserialise from Json" in {
