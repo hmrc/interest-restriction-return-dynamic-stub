@@ -23,42 +23,42 @@ import play.api.libs.json.{JsError, JsObject, Json}
 
 class ErrorResponseSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite {
 
-  private val errorResponse: ErrorResponse = ErrorResponse(
-    failures = List[FailureMessage](
-      FailureMessage(
-        code = "INVALID_PAYLOAD",
-        reason = "Submission has not passed validation. Invalid payload."
-      ),
-      FailureMessage(
-        code = "SERVER_ERROR",
-        reason = "IF is currently experiencing problems that require live service intervention."
-      ),
-      FailureMessage(
-        code = "SERVICE_UNAVAILABLE",
-        reason = "Dependent systems are currently not responding."
-      ),
-      FailureMessage(
-        code = "UNAUTHORIZED",
-        reason = "Request Unauthorized."
-      ),
-      FailureMessage(
-        code = "INVALID_CORRELATIONID",
-        reason = "Submission has not passed validation. Invalid Header CorrelationId."
-      ),
-      FailureMessage(
-        code = "MISSING_BEARER_TOKEN",
-        reason = "Bearer token is missing."
-      ),
-      FailureMessage(
-        code = "MISSING_BODY",
-        reason = "There was no body provided."
-      ),
-      FailureMessage(
-        code = "INVALID_ENVIRONMENT",
-        reason = "The environment is invalid."
-      )
+  val failureMessages =
+    List(
+    FailureMessage(
+      code = "INVALID_PAYLOAD",
+      reason = "Submission has not passed validation. Invalid payload."
+    ),
+    FailureMessage(
+      code = "SERVER_ERROR",
+      reason = "IF is currently experiencing problems that require live service intervention."
+    ),
+    FailureMessage(
+      code = "SERVICE_UNAVAILABLE",
+      reason = "Dependent systems are currently not responding."
+    ),
+    FailureMessage(
+      code = "UNAUTHORIZED",
+      reason = "Request Unauthorized."
+    ),
+    FailureMessage(
+      code = "INVALID_CORRELATIONID",
+      reason = "Submission has not passed validation. Invalid Header CorrelationId."
+    ),
+    FailureMessage(
+      code = "MISSING_BEARER_TOKEN",
+      reason = "Bearer token is missing."
+    ),
+    FailureMessage(
+      code = "MISSING_BODY",
+      reason = "There was no body provided."
+    ),
+    FailureMessage(
+      code = "INVALID_ENVIRONMENT",
+      reason = "The environment is invalid."
     )
   )
+  private val errorResponse: ErrorResponse = ErrorResponse(failures = failureMessages)
 
   private val json =
     Json.obj(
@@ -82,6 +82,7 @@ class ErrorResponseSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSui
 
   "ErrorResponse" should {
     "serialise to Json" in {
+      Json.format[ErrorResponse].map(f => println(f))
       Json.toJson(errorResponse) shouldBe json
     }
 
@@ -96,6 +97,7 @@ class ErrorResponseSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSui
 
   "FailureMessage" should {
     "serialise to Json" in {
+      Json.format[FailureMessage].map(f => println(f))
       Json.toJson(errorResponse.failures.head) shouldBe json("failures").head.get
     }
 

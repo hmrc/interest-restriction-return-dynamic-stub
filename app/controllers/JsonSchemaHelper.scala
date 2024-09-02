@@ -18,7 +18,7 @@ package controllers
 
 import com.fasterxml.jackson.core.{JsonFactory, JsonParser}
 import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
-import com.networknt.schema._
+import com.networknt.schema.*
 import config.{EnvironmentValues, HeaderKeys}
 import models.{ErrorResponse, FailureMessage}
 import play.api.Logging

@@ -22,13 +22,13 @@ import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.{HeaderNames, Status}
 import play.api.libs.json.{JsObject, JsString, JsValue, Json}
 import play.api.test.{FakeRequest, Helpers}
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 
 import scala.io.{BufferedSource, Source}
 import actions.AuthenticatedAction
 import play.api.mvc.{AnyContentAsEmpty, BodyParsers}
 import models.{ErrorResponse, FailureMessage}
-import config._
+import config.*
 
 import java.util.UUID
 import scala.util.Try
@@ -42,9 +42,9 @@ class FullReturnControllerSpec extends AnyWordSpec with Matchers with GuiceOneAp
   val FakeRequestWithHeaders: FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest("POST", "/").withHeaders(HeaderNames.AUTHORIZATION -> "Bearer 1234")
 
-  implicit val ec: scala.concurrent.ExecutionContext = scala.concurrent.ExecutionContext.global
-  val bodyParsers: BodyParsers.Default               = app.injector.instanceOf[BodyParsers.Default]
-  val authenticatedAction: AuthenticatedAction       = new AuthenticatedAction(bodyParsers)
+  given ec: scala.concurrent.ExecutionContext  = scala.concurrent.ExecutionContext.global
+  val bodyParsers: BodyParsers.Default         = app.injector.instanceOf[BodyParsers.Default]
+  val authenticatedAction: AuthenticatedAction = new AuthenticatedAction(bodyParsers)
 
   "POST of a full return" should {
     "return 201 when the payload is validated" in {

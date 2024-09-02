@@ -16,18 +16,18 @@
 
 package models
 
-import play.api.libs.json._
+import play.api.libs.json.*
 
 case class ErrorResponse(failures: List[FailureMessage])
 
 case class FailureMessage(code: String, reason: String)
 
 object ErrorResponse {
-  implicit val reads: OFormat[ErrorResponse] = Json.format[ErrorResponse]
+  given OFormat[ErrorResponse] = Json.format[ErrorResponse]
 }
 
 object FailureMessage {
-  implicit val reads: OFormat[FailureMessage] = Json.format[FailureMessage]
+  given OFormat[FailureMessage] = Json.format[FailureMessage]
 
   val InvalidJson: FailureMessage          =
     FailureMessage("INVALID_PAYLOAD", "Submission has not passed validation. Invalid payload.")

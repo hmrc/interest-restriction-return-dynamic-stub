@@ -17,14 +17,14 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-import play.api.mvc._
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import scala.concurrent.Future
 import play.api.libs.json.{JsValue, Json}
 import play.api.Logging
 import actions.AuthenticatedAction
 import models.{ErrorResponse, FailureMessage}
-import scala.concurrent._
+import scala.concurrent.*
 import java.util.UUID.randomUUID
 
 @Singleton()

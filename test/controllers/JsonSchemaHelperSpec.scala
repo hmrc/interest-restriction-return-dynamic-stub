@@ -17,12 +17,11 @@
 package controllers
 
 import org.scalatest.matchers.should.Matchers
-import org.scalatest.matchers.should.Matchers.shouldBe
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
-import play.api.mvc.Results._
-import play.api.test.Helpers._
+import play.api.mvc.Results.*
+import play.api.test.Helpers.*
 
 import scala.concurrent.Future
 import scala.io.{BufferedSource, Source}
