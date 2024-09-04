@@ -17,8 +17,8 @@
 package actions
 
 import com.google.inject.Inject
-import play.api.mvc.Results.*
-import play.api.mvc.*
+import play.api.mvc.Results._
+import play.api.mvc._
 import play.api.http.HeaderNames
 
 import scala.concurrent._

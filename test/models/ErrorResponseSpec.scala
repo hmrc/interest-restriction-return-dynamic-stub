@@ -23,7 +23,7 @@ import play.api.libs.json.{JsError, JsObject, Json}
 
 class ErrorResponseSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite {
 
-  val failureMessages =
+  val failureMessages: List[FailureMessage] =
     List(
     FailureMessage(
       code = "INVALID_PAYLOAD",

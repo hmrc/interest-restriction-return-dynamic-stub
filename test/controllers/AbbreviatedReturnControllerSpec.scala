@@ -23,10 +23,10 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.{HeaderNames, Status}
-import play.api.libs.json.*
+import play.api.libs.json._
 import play.api.mvc.{AnyContentAsEmpty, BodyParsers}
 import play.api.test.FakeRequest
-import play.api.test.Helpers.*
+import play.api.test.Helpers._
 
 import java.util.UUID
 import scala.io.{BufferedSource, Source}
