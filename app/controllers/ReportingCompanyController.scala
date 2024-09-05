@@ -32,9 +32,10 @@ class ReportingCompanyController @Inject() (authenticatedAction: AuthenticatedAc
     extends BackendController(cc)
     with Logging {
 
-  implicit val ec: ExecutionContext = cc.executionContext
+  given ec: ExecutionContext = cc.executionContext
 
-  def appoint(): Action[AnyContent] = authenticatedAction.async { implicit request =>
+  def appoint(): Action[AnyContent] = authenticatedAction.async { request =>
+    given Request[AnyContent]     = request
     val jsonBody: Option[JsValue] = request.body.asJson
 
     logger.debug(s"Received headers ${request.headers}")
