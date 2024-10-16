@@ -38,7 +38,7 @@ class FullReturnController @Inject() (authenticatedAction: AuthenticatedAction, 
     given Request[AnyContent]     = request
     val jsonBody: Option[JsValue] = request.body.asJson
 
-    logger.debug(s"Received headers ${request.headers}")
+    logger.debug(s"[FullReturnController][fullReturn] Received headers ${request.headers}")
 
     JsonSchemaHelper.applySchemaHeaderValidation(request.headers) {
       JsonSchemaHelper.applySchemaValidation("/resources/schemas/submit_full_irr.json", jsonBody) {

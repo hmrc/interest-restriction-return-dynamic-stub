@@ -64,12 +64,12 @@ object JsonSchemaHelper extends Logging {
         validationResult match {
           case Some(res) if res.isEmpty => f
           case Some(res)                =>
-            logger.info(s"[INTEREST-RESTRICTION-RETURN-DYNAMIC-STUB][VALIDATION-ERROR][${res.toString}]")
+            logger.info(s"[JsonSchemaHelper][applySchemaValidation] [${res.toString}]")
             Future.successful(BadRequest(Json.toJson(ErrorResponse(List(FailureMessage.InvalidJson)))))
           case _                        => Future.successful(BadRequest(Json.toJson(ErrorResponse(List(FailureMessage.MissingBody)))))
         }
       case Failure(e)      =>
-        logger.error(s"Error: ${e.getMessage}", e)
+        logger.error(s"[JsonSchemaHelper][applySchemaValidation] Error: ${e.getMessage}", e)
         Future.successful(InternalServerError(""))
     }
 
