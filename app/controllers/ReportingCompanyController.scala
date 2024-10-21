@@ -38,7 +38,7 @@ class ReportingCompanyController @Inject() (authenticatedAction: AuthenticatedAc
     given Request[AnyContent]     = request
     val jsonBody: Option[JsValue] = request.body.asJson
 
-    logger.debug(s"Received headers ${request.headers}")
+    logger.debug(s"[ReportingCompanyController][appoint] Received headers ${request.headers}")
 
     JsonSchemaHelper.applySchemaHeaderValidation(request.headers) {
       JsonSchemaHelper.applySchemaValidation("/resources/schemas/appoint_irr_reporting_company.json", jsonBody) {
@@ -64,7 +64,7 @@ class ReportingCompanyController @Inject() (authenticatedAction: AuthenticatedAc
   def revoke(): Action[AnyContent] = authenticatedAction.async { implicit request =>
     val jsonBody: Option[JsValue] = request.body.asJson
 
-    logger.debug(s"Received headers ${request.headers}")
+    logger.debug(s"[ReportingCompanyController][revoke] Received headers ${request.headers}")
 
     JsonSchemaHelper.applySchemaHeaderValidation(request.headers) {
       JsonSchemaHelper.applySchemaValidation("/resources/schemas/revoke_irr_reporting_company.json", jsonBody) {

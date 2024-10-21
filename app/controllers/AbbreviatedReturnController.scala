@@ -38,7 +38,7 @@ class AbbreviatedReturnController @Inject() (authenticatedAction: AuthenticatedA
     given Request[AnyContent]     = request
     val jsonBody: Option[JsValue] = request.body.asJson
 
-    logger.debug(s"Received headers ${request.headers}")
+    logger.debug(s"[AbbreviatedReturnController][abbreviation] Received headers ${request.headers}")
 
     JsonSchemaHelper.applySchemaHeaderValidation(request.headers) {
       JsonSchemaHelper.applySchemaValidation("/resources/schemas/abbreviated_irr.json", jsonBody) {

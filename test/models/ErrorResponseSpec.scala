@@ -25,40 +25,40 @@ class ErrorResponseSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSui
 
   val failureMessages: List[FailureMessage] =
     List(
-    FailureMessage(
-      code = "INVALID_PAYLOAD",
-      reason = "Submission has not passed validation. Invalid payload."
-    ),
-    FailureMessage(
-      code = "SERVER_ERROR",
-      reason = "IF is currently experiencing problems that require live service intervention."
-    ),
-    FailureMessage(
-      code = "SERVICE_UNAVAILABLE",
-      reason = "Dependent systems are currently not responding."
-    ),
-    FailureMessage(
-      code = "UNAUTHORIZED",
-      reason = "Request Unauthorized."
-    ),
-    FailureMessage(
-      code = "INVALID_CORRELATIONID",
-      reason = "Submission has not passed validation. Invalid Header CorrelationId."
-    ),
-    FailureMessage(
-      code = "MISSING_BEARER_TOKEN",
-      reason = "Bearer token is missing."
-    ),
-    FailureMessage(
-      code = "MISSING_BODY",
-      reason = "There was no body provided."
-    ),
-    FailureMessage(
-      code = "INVALID_ENVIRONMENT",
-      reason = "The environment is invalid."
+      FailureMessage(
+        code = "INVALID_PAYLOAD",
+        reason = "Submission has not passed validation. Invalid payload."
+      ),
+      FailureMessage(
+        code = "SERVER_ERROR",
+        reason = "IF is currently experiencing problems that require live service intervention."
+      ),
+      FailureMessage(
+        code = "SERVICE_UNAVAILABLE",
+        reason = "Dependent systems are currently not responding."
+      ),
+      FailureMessage(
+        code = "UNAUTHORIZED",
+        reason = "Request Unauthorized."
+      ),
+      FailureMessage(
+        code = "INVALID_CORRELATIONID",
+        reason = "Submission has not passed validation. Invalid Header CorrelationId."
+      ),
+      FailureMessage(
+        code = "MISSING_BEARER_TOKEN",
+        reason = "Bearer token is missing."
+      ),
+      FailureMessage(
+        code = "MISSING_BODY",
+        reason = "There was no body provided."
+      ),
+      FailureMessage(
+        code = "INVALID_ENVIRONMENT",
+        reason = "The environment is invalid."
+      )
     )
-  )
-  private val errorResponse: ErrorResponse = ErrorResponse(failures = failureMessages)
+  private val errorResponse: ErrorResponse  = ErrorResponse(failures = failureMessages)
 
   private val json =
     Json.obj(

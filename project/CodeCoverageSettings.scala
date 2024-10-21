@@ -1,5 +1,5 @@
 import sbt.Setting
-import scoverage.ScoverageKeys.{coverageExcludedFiles, coverageFailOnMinimum, coverageHighlighting, coverageMinimumStmtTotal}
+import scoverage.ScoverageKeys.*
 
 object CodeCoverageSettings {
 
