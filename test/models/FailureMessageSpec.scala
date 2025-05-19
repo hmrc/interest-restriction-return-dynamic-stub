@@ -20,7 +20,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.*
 
-class ErrorResponseSpec extends AnyWordSpec with Matchers {
+class FailureMessageSpec extends AnyWordSpec with Matchers {
 
   val failureMessages: List[FailureMessage] =
     List(
@@ -57,7 +57,6 @@ class ErrorResponseSpec extends AnyWordSpec with Matchers {
         reason = "The environment is invalid."
       )
     )
-  private val errorResponse: ErrorResponse  = ErrorResponse(failures = failureMessages)
 
   private val json =
     Json.obj(
@@ -79,27 +78,25 @@ class ErrorResponseSpec extends AnyWordSpec with Matchers {
       )
     )
 
-  "ErrorResponseSpec" should {
+  "FailureMessageSpec" should {
     "serialise to Json" in {
-      Json.toJson(errorResponse) shouldBe json
+      Json.toJson(failureMessages.head) shouldBe json("failures").head.get
     }
 
     "to deserialise from Json" in {
-      json.as[ErrorResponse] shouldBe errorResponse
+      json("failures").as[List[FailureMessage]].head shouldBe failureMessages.head
     }
 
-    "error when JSON is invalid" in {
-      JsObject.empty.validate[ErrorResponse] shouldBe a[JsError]
+    "error when JSON is empty" in {
+      JsObject.empty.validate[FailureMessage] shouldBe a[JsError]
     }
 
     "error when JSON has invalid types" in {
-      Json.arr("failures" -> JsNumber(1)).validate[ErrorResponse] shouldBe a[JsError]
+      Json.obj("code" -> JsNumber(1), "reason" -> JsBoolean(true)).validate[FailureMessage] shouldBe a[JsError]
     }
 
     "error when JSON has invalid types2" in {
-      Json.obj("key" -> JsBoolean(true)).validate[ErrorResponse] shouldBe a[JsError]
+      Json.arr(JsBoolean(true)).validate[FailureMessage] shouldBe a[JsError]
     }
-
   }
-
 }
