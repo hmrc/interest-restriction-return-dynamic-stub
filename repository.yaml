@@ -1,3 +1,8 @@
+digital-service: Interest Restriction Returns (IRR)
+description: This is a protected backend microservice that stubs the functionality of the HMRC HoD systems API for Interest Restriction Returns.
 repoVisibility: public_0C3F0CE3E6E6448FAD341E7BFA50FCD333E06A20CFF05FCACE61154DDBBADF71
+type: Service
+service-type: Backend
 test-repositories:
   - interest-restriction-return-contract-tests
+  - interest-restriction-return-performance-tests
