@@ -2,7 +2,4 @@
 
 ->         /                                                        health.Routes
 
-POST       /organisations/interest-restrictions-return/full         controllers.FullReturnController.fullReturn()
-POST       /organisations/interest-restrictions-return/appoint      controllers.ReportingCompanyController.appoint()
-POST       /organisations/interest-restrictions-return/revoke       controllers.ReportingCompanyController.revoke()
-POST       /organisations/interest-restrictions-return/abbreviated  controllers.AbbreviatedReturnController.abbreviation()
+->         /organisations/interest-restrictions-return              irr.Routes

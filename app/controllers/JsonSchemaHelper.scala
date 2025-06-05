@@ -18,13 +18,14 @@ package controllers
 
 import com.fasterxml.jackson.core.{JsonFactory, JsonParser}
 import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
-import com.networknt.schema._
+import com.networknt.schema.*
 import config.{EnvironmentValues, HeaderKeys}
+import file.FileReader
 import models.{ErrorResponse, FailureMessage}
 import play.api.Logging
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Headers, Result}
 import play.api.mvc.Results.{BadRequest, InternalServerError}
+import play.api.mvc.{Headers, Result}
 
 import java.util
 import scala.concurrent.{ExecutionContext, Future}
@@ -57,7 +58,9 @@ object JsonSchemaHelper extends Logging {
       result
     }
 
-  def applySchemaValidation(schemaPath: String, jsonBody: Option[JsValue])(f: => Future[Result]): Future[Result] =
+  private def applySchemaValidation(schemaPath: String, jsonBody: Option[JsValue])(
+    f: => Future[Result]
+  ): Future[Result] =
     retrieveJsonSchema(schemaPath) match {
       case Success(schema) =>
         val validationResult: Option[util.Set[ValidationMessage]] = JsonSchemaHelper.validRequest(schema, jsonBody)
@@ -73,8 +76,14 @@ object JsonSchemaHelper extends Logging {
         Future.successful(InternalServerError(""))
     }
 
+  def applySchemaValidation(schemaDir: String, schemaFilename: String, jsonBody: Option[JsValue])(
+    f: => Future[Result]
+  ): Future[Result] = applySchemaValidation(s"$schemaDir/$schemaFilename", jsonBody)(f)
+
   private def retrieveJsonSchema(schemaPath: String): Try[JsValue] = {
-    val jsonSchema: Try[String] = Try(Source.fromInputStream(getClass.getResourceAsStream(schemaPath)).mkString)
+    logger.info(s"[JsonSchemaHelper][retrieveJsonSchema] Schema path: $schemaPath")
+
+    val jsonSchema: Try[String] = Try(FileReader.readFile(schemaPath))
     jsonSchema.map(Json.parse)
   }
 

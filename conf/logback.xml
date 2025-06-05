@@ -15,10 +15,7 @@
     </appender>
 
     <logger name="com.google.inject" level="INFO"/>
-
-    <logger name="uk.gov" level="INFO"/>
-
-    <logger name="application" level="DEBUG"/>
+    <logger name="org.apache.pekko" level="INFO"/>
 
     <root level="DEBUG">
         <appender-ref ref="FILE"/>

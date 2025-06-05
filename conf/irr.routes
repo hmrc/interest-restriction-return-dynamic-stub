@@ -1,0 +1,4 @@
+POST       /full         controllers.irr.FullReturnController.fullReturn()
+POST       /appoint      controllers.irr.ReportingCompanyController.appoint()
+POST       /revoke       controllers.irr.ReportingCompanyController.revoke()
+POST       /abbreviated  controllers.irr.AbbreviatedReturnController.abbreviation()

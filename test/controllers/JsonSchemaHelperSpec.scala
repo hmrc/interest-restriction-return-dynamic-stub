@@ -16,29 +16,28 @@
 
 package controllers
 
+import file.FileReader.readFileAsJson
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Result
-import play.api.mvc.Results._
-import play.api.test.Helpers._
+import play.api.mvc.Results.*
+import play.api.test.Helpers.*
 
 import scala.concurrent.Future
 import scala.io.{BufferedSource, Source}
 
 class JsonSchemaHelperSpec extends AnyWordSpec with Matchers {
 
-  private val source: BufferedSource   = Source.fromFile("conf/resources/examples/example_submit_full_irr_body.json")
-  private val requestBodyJson: JsValue =
-    try Json.parse(source.mkString)
-    finally source.close()
+  private val requestBodyJson: JsValue = readFileAsJson("conf/resources/irr/examples/example_submit_full_body.json")
 
   "JsonSchemaHelper" when {
     ".applySchemaValidation" should {
       "return 200 OK" when {
         "a valid schema path is found" in {
           val result: Future[Result] = JsonSchemaHelper.applySchemaValidation(
-            schemaPath = "/resources/schemas/submit_full_irr.json",
+            schemaDir = "resources/irr/schemas",
+            schemaFilename = "submit_full.json",
             jsonBody = Some(requestBodyJson)
           )(Future.successful(Ok))
 
@@ -49,7 +48,8 @@ class JsonSchemaHelperSpec extends AnyWordSpec with Matchers {
       "return 500 INTERNAL_SERVER_ERROR" when {
         "an invalid schema path is found" in {
           val result: Future[Result] = JsonSchemaHelper.applySchemaValidation(
-            schemaPath = "/resources/schemas/submit_full_irr_incorrect.json",
+            schemaDir = "resources/irr/schemas",
+            schemaFilename = "submit_full_incorrect.json",
             jsonBody = Some(requestBodyJson)
           )(Future.successful(Ok))
 

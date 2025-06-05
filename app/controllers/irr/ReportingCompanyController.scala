@@ -14,34 +14,62 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.irr
 
 import actions.AuthenticatedAction
+import controllers.JsonSchemaHelper
 import models.{ErrorResponse, FailureMessage}
 import play.api.Logging
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc._
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import java.util.UUID.randomUUID
 import javax.inject.{Inject, Singleton}
-import scala.concurrent._
+import scala.concurrent.*
 
 @Singleton()
-class AbbreviatedReturnController @Inject() (authenticatedAction: AuthenticatedAction, cc: ControllerComponents)
+class ReportingCompanyController @Inject() (authenticatedAction: AuthenticatedAction, cc: ControllerComponents)
     extends BackendController(cc)
-    with Logging {
+    with Logging
+    with IrrBaseController {
 
   given ec: ExecutionContext = cc.executionContext
 
-  def abbreviation(): Action[AnyContent] = authenticatedAction.async { request =>
+  def appoint(): Action[AnyContent] = authenticatedAction.async { request =>
     given Request[AnyContent]     = request
     val jsonBody: Option[JsValue] = request.body.asJson
 
-    logger.debug(s"[AbbreviatedReturnController][abbreviation] Received headers ${request.headers}")
+    logger.debug(s"[ReportingCompanyController][appoint] Received headers ${request.headers}")
 
     JsonSchemaHelper.applySchemaHeaderValidation(request.headers) {
-      JsonSchemaHelper.applySchemaValidation("/resources/schemas/abbreviated_irr.json", jsonBody) {
+      JsonSchemaHelper.applySchemaValidation(schemaDir, "appoint_reporting_company.json", jsonBody) {
+        val agentName = jsonBody.flatMap(body => (body \ "agentDetails" \ "agentName").asOpt[String])
+
+        val response = agentName match {
+          case Some("ServerError")        => InternalServerError(Json.toJson(ErrorResponse(List(FailureMessage.ServerError))))
+          case Some("ServiceUnavailable") =>
+            ServiceUnavailable(Json.toJson(ErrorResponse(List(FailureMessage.ServiceUnavailable))))
+          case Some("Unauthorized")       => Unauthorized(Json.toJson(ErrorResponse(List(FailureMessage.Unauthorized))))
+          case _                          =>
+            val acknowledgementReference = randomUUID().toString
+            val responseString           = s"""{"acknowledgementReference":"$acknowledgementReference"}"""
+            val responseJson             = Json.parse(responseString)
+            Created(responseJson)
+        }
+
+        Future.successful(response)
+      }
+    }
+  }
+
+  def revoke(): Action[AnyContent] = authenticatedAction.async { implicit request =>
+    val jsonBody: Option[JsValue] = request.body.asJson
+
+    logger.debug(s"[ReportingCompanyController][revoke] Received headers ${request.headers}")
+
+    JsonSchemaHelper.applySchemaHeaderValidation(request.headers) {
+      JsonSchemaHelper.applySchemaValidation(schemaDir, "revoke_reporting_company.json", jsonBody) {
         val agentName = jsonBody.flatMap(body => (body \ "agentDetails" \ "agentName").asOpt[String])
 
         val response = agentName match {

@@ -14,38 +14,32 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.irr
 
+import actions.AuthenticatedAction
+import config.*
+import controllers.irr.ReportingCompanyController
+import file.FileReader.readFileAsJson
+import models.{ErrorResponse, FailureMessage}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.{HeaderNames, Status}
 import play.api.libs.json.{JsObject, JsString, JsValue, Json}
-import play.api.test.{FakeRequest, Helpers}
-import play.api.test.Helpers._
-
-import scala.io.{BufferedSource, Source}
-import actions.AuthenticatedAction
 import play.api.mvc.{AnyContentAsEmpty, BodyParsers}
-import models.{ErrorResponse, FailureMessage}
-import config._
+import play.api.test.Helpers.*
+import play.api.test.{FakeRequest, Helpers}
 
-import scala.util.Try
 import java.util.UUID
+import scala.io.{BufferedSource, Source}
+import scala.util.Try
 
 class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite {
 
-  val sourceAppJoint: BufferedSource  =
-    Source.fromFile("conf/resources/examples/example_appoint_irr_reporting_company_body.json")
-  val exampleAppointJsonBody: JsValue =
-    try Json.parse(sourceAppJoint.mkString)
-    finally sourceAppJoint.close()
-
-  val sourceRevoke: BufferedSource                                =
-    Source.fromFile("conf/resources/examples/example_revoke_irr_reporting_company_body.json")
+  val exampleAppointJsonBody: JsValue                             =
+    readFileAsJson("conf/resources/irr/examples/example_appoint_reporting_company_body.json")
   val exampleRevokeJsonBody: JsValue                              =
-    try Json.parse(sourceRevoke.mkString)
-    finally sourceAppJoint.close()
+    readFileAsJson("conf/resources/irr/examples/example_revoke_reporting_company_body.json")
   val FakeRequestWithHeaders: FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest("POST", "/").withHeaders(HeaderNames.AUTHORIZATION -> "Bearer 1234")
 
