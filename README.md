@@ -15,7 +15,7 @@ sbt run
 ./run_all_tests.sh
 ```
 
-## API Endpoint Definitions
+## API Endpoint Definitions (IRR)
 
 **Manage the Reporting Company for the Interest Restriction Return filing**
 
@@ -35,17 +35,17 @@ sbt run
 
 **Authentication required:** `Yes, bearer token required`
 
-**Request Schema:** [Json Schema](conf/resources/schemas/appoint_irr_reporting_company.json)
+**Request Schema:** [Json Schema](conf/resources/irr/schemas/appoint_reporting_company.json)
 
-**Example Request:** [Request Json](conf/resources/examples/example_appoint_irr_reporting_company_body.json)
+**Example Request:** [Request Json](conf/resources/irr/examples/example_appoint_reporting_company_body.json)
 
 #### Success Response
 
 **Code:** `201 (CREATED)`
 
-**Response Schema:** [Json Schema](conf/resources/schemas/response.json)
+**Response Schema:** [Json Schema](conf/resources/irr/schemas/response.json)
 
-**Example Response:** [Response Json](conf/resources/examples/example_response.json)
+**Example Response:** [Response Json](conf/resources/irr/examples/example_response.json)
 
 ### Revoke a Reporting Company
 
@@ -55,17 +55,17 @@ sbt run
 
 **Authentication required:** `Yes, bearer token required`
 
-**Request Schema:** [Json Schema](conf/resources/schemas/revoke_irr_reporting_company.json)
+**Request Schema:** [Json Schema](conf/resources/irr/schemas/revoke_reporting_company.json)
 
-**Example Request:** [Request Json](conf/resources/examples/example_revoke_irr_reporting_company_body.json)
+**Example Request:** [Request Json](conf/resources/irr/examples/example_revoke_reporting_company_body.json)
 
 #### Success Response
 
 **Code:** `201 (CREATED)`
 
-**Response Schema:** [Json Schema](conf/resources/schemas/response.json)
+**Response Schema:** [Json Schema](conf/resources/irr/schemas/response.json)
 
-**Example Response:** [Response Json](conf/resources/examples/example_response.json)
+**Example Response:** [Response Json](conf/resources/irr/examples/example_response.json)
 
 ### Submit an Abbreviated Interest Restriction Return
 
@@ -75,17 +75,17 @@ sbt run
 
 **Authentication required:** `Yes, bearer token required`
 
-**Request Schema:** [Json Schema](conf/resources/schemas/abbreviated_irr.json)
+**Request Schema:** [Json Schema](conf/resources/irr/schemas/abbreviated.json)
 
-**Example Request:** [Request Json](conf/resources/examples/example_abbreviated_irr_body.json)
+**Example Request:** [Request Json](conf/resources/irr/examples/example_abbreviated_body.json)
 
 #### Success Response
 
 **Code:** `201 (CREATED)`
 
-**Response Schema:** [Json Schema](conf/resources/schemas/response.json)
+**Response Schema:** [Json Schema](conf/resources/irr/schemas/response.json)
 
-**Example Response:** [Response Json](conf/resources/examples/example_response.json)
+**Example Response:** [Response Json](conf/resources/irr/examples/example_response.json)
 
 ### Submit a Full Interest Restriction Return
 
@@ -95,17 +95,20 @@ sbt run
 
 **Authentication required:** `Yes, bearer token required`
 
-**Request Schema:** [Json Schema](conf/resources/schemas/submit_full_irr.json)
+**Request Schema:** [Json Schema](conf/resources/irr/schemas/submit_full.json)
 
-**Example Request:** [Request Json](conf/resources/examples/example_submit_full_irr_body.json)
+**Example Request:** [Request Json](conf/resources/irr/examples/example_submit_full_body.json)
 
 #### Success Response
 
 **Code:** `201 (CREATED)`
 
-**Response Schema:** [Json Schema](conf/resources/schemas/response.json)
+**Response Schema:** [Json Schema](conf/resources/irr/schemas/response.json)
 
-**Example Response:** [Response Json](conf/resources/examples/example_response.json)
+**Example Response:** [Response Json](conf/resources/irr/examples/example_response.json)
+
+## API Endpoint Definitions (CIR)
+TBA
 
 ## License
 

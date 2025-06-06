@@ -14,23 +14,25 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.irr
 
 import actions.AuthenticatedAction
+import controllers.JsonSchemaHelper
 import models.{ErrorResponse, FailureMessage}
 import play.api.Logging
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc._
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import java.util.UUID.randomUUID
 import javax.inject.{Inject, Singleton}
-import scala.concurrent._
+import scala.concurrent.*
 
 @Singleton()
 class FullReturnController @Inject() (authenticatedAction: AuthenticatedAction, cc: ControllerComponents)
     extends BackendController(cc)
-    with Logging {
+    with Logging
+    with IrrBaseController {
 
   given ec: ExecutionContext = cc.executionContext
 
@@ -41,7 +43,7 @@ class FullReturnController @Inject() (authenticatedAction: AuthenticatedAction, 
     logger.debug(s"[FullReturnController][fullReturn] Received headers ${request.headers}")
 
     JsonSchemaHelper.applySchemaHeaderValidation(request.headers) {
-      JsonSchemaHelper.applySchemaValidation("/resources/schemas/submit_full_irr.json", jsonBody) {
+      JsonSchemaHelper.applySchemaValidation(schemaDir, "submit_full.json", jsonBody) {
         val agentName = jsonBody.flatMap(body => (body \ "agentDetails" \ "agentName").asOpt[String])
 
         val response = agentName match {
