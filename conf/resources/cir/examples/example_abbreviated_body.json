@@ -1,0 +1,100 @@
+{
+  "declaration": true,
+  "agentDetails": {
+    "agentActingOnBehalfOfCompany": true,
+    "agentName": "Some agent"
+  },
+  "reportingCompany": {
+    "companyName": "A Reporting Company",
+    "ctutr": "1123456747",
+    "sameAsUltimateParent": true
+  },
+  "parentCompany": {
+    "ultimateParent": {
+      "isUk": true,
+      "ctutr": "8764783632",
+      "sautr": "0897876656",
+      "knownAs": "$$=!|~Ḁỿ",
+      "legalEntityIdentifier": "213800WRYCD72WGOOY58",
+      "companyName": "$$=!|~Ḁỿ",
+      "countryOfIncorporation": "JP"
+    }
+  },
+  "publicInfrastructure": true,
+  "groupCompanyDetails": {
+    "totalCompanies": 1,
+    "accountingPeriod": {
+      "startDate": "1920-02-29",
+      "endDate": "1920-02-29"
+    }
+  },
+  "submissionType": "original",
+  "revisedReturnDetails": "Calculation symbols and formulae y=x,  73463784 ÷ (839393987 + 73678979)",
+  "angie": 0.01,
+  "groupLevelElections": {
+    "activeInterestAllowanceAlternativeCalculation": true,
+    "groupRatio": {
+      "activeGroupEBITDAChargeableGains": true,
+      "isElected": true,
+      "groupRatioBlended": {
+        "isElected": true,
+        "investorGroups": [
+          {
+            "groupName": "₠ ₡ ₢ ₣ ₤ ₥ ₦ ₧ ₨ ₩ ₪ ₫ € ₭ ₮ ₯ ₰ ₱ ₲",
+            "elections": [
+              "groupRatioBlended",
+              "groupEBITDA",
+              "interestAllowanceAlternativeCalculation",
+              "interestAllowanceNonConsolidatedInvestment",
+              "interestAllowanceConsolidatedPartnership"
+            ]
+          },
+          {
+            "groupName": " ₰ ₱ ₲ ₳ ₴ ₵ ₶ ₷ ₸ ₹ ₺ ₻ ₼ ₽ ₾ ₿"
+          }
+        ]
+      },
+      "groupEBITDAChargeableGains": true
+    },
+    "interestAllowanceAlternativeCalculation": true,
+    "interestAllowanceNonConsolidatedInvestment": {
+      "isElected": true,
+      "nonConsolidatedInvestments": [
+        {
+          "investmentName": "Investment 12323"
+        },
+        {
+          "investmentName": "Investment C"
+        }
+      ]
+    },
+    "interestAllowanceConsolidatedPartnership": {
+      "isElected": true,
+      "isActive": true,
+      "consolidatedPartnerships": [
+        {
+          "partnershipName": "Öbs",
+          "sautr": "3466564633"
+        },
+        {
+          "partnershipName": "Äßß",
+          "sautr": "9495644574"
+        }
+      ]
+    }
+  },
+  "ukCompanies": [
+    {
+      "companyName": "!!Company A$$$==",
+      "utr": "7634834546",
+      "consenting": true,
+      "qicElection": true
+    },
+    {
+      "companyName": "!!Company B $$$==",
+      "utr": "7236453286",
+      "consenting": true,
+      "qicElection": true
+    }
+  ]
+}
