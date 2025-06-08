@@ -1,7 +1,8 @@
 {
-	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"title": "Submit Abbreviated IRR Request Schema",
 	"type": "object",
+	"additionalProperties": false,
 	"required": [
 		"agentDetails",
 		"declaration",
@@ -17,19 +18,20 @@
 		},
 		"agentDetails": {
 			"type": "object",
+			"additionalProperties": false,
 			"required": ["agentActingOnBehalfOfCompany"],
 			"properties": {
 				"agentActingOnBehalfOfCompany": {
 					"type": "boolean"
 				},
 				"agentName": {
-					"type": "string",
-					"pattern": "^[ -~?-??-??-??-??-??-???]{1,160}$"
+					"$ref": "#/definitions/ukCompanyNameType"
 				}
 			}
 		},
 		"reportingCompany": {
 			"type": "object",
+			"additionalProperties": false,
 			"required": [
 				"companyName",
 				"ctutr",
@@ -37,12 +39,10 @@
 			],
 			"properties": {
 				"companyName": {
-					"type": "string",
-					"pattern": "^[ -~?-??-??-??-??-??-???]{1,160}$"
+					"$ref": "#/definitions/ukCompanyNameType"
 				},
 				"ctutr": {
-					"type": "string",
-					"pattern": "^[0-9]{10}"
+					"$ref": "#/definitions/utrType"
 				},
 				"sameAsUltimateParent": {
 					"type": "boolean"
@@ -51,25 +51,39 @@
 		},
 		"parentCompany": {
 			"type": "object",
-			"properties": {
-				"ultimateParent": {
-					"$ref": "#/definitions/parentType"
+			"additionalProperties": false,
+			"oneOf": [
+				{
+					"properties": {
+						"ultimateParent": {
+							"$ref": "#/definitions/parentType"
+						}
+					},
+					"required": ["ultimateParent"],
+					"additionalProperties": false
 				},
-				"deemedParent": {
-					"type": "array",
-					"minItems": 2,
-					"maxItems": 3,
-					"items": {
-						"$ref": "#/definitions/parentType"
-					}
+				{
+					"properties": {
+						"deemedParent": {
+							"type": "array",
+							"minItems": 2,
+							"maxItems": 3,
+							"items": {
+								"$ref": "#/definitions/parentType"
+							}
+						}
+					},
+					"required": ["deemedParent"],
+					"additionalProperties": false
 				}
-			}
+			]
 		},
 		"publicInfrastructure": {
 			"type": "boolean"
 		},
 		"groupCompanyDetails": {
 			"type": "object",
+			"additionalProperties": false,
 			"required": [
 				"accountingPeriod",
 				"totalCompanies"
@@ -77,22 +91,22 @@
 			"properties": {
 				"totalCompanies": {
 					"type": "integer",
-					"format": "int32"
+					"format": "int32",
+					"minimum": 1
 				},
 				"accountingPeriod": {
 					"type": "object",
+					"additionalProperties": false,
 					"required": [
 						"endDate",
 						"startDate"
 					],
 					"properties": {
 						"startDate": {
-							"type": "string",
-							"pattern": "^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-](0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$"
+							"$ref": "#/definitions/dateType"
 						},
 						"endDate": {
-							"type": "string",
-							"pattern": "^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-](0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$"
+							"$ref": "#/definitions/dateType"
 						}
 					}
 				}
@@ -103,20 +117,21 @@
 			"enum": ["original", "revised"]
 		},
 		"revisedReturnDetails": {
-			"type": "string",
-			"pattern": "^[ -~?-????????-??-????-?]{1,5000}$"
+			"$ref": "#/definitions/explanatoryNotesShort"
 		},
 		"angie": {
 			"type": "number",
 			"minimum": 0,
-			"exclusiveMinimum": false
+			"multipleOf": 0.01
 		},
 		"ukCompanies": {
 			"type": "array",
 			"minItems": 1,
 			"maxItems": 2147483647,
+			"uniqueItems": true,
 			"items": {
 				"type": "object",
+				"additionalProperties": false,
 				"required": [
 					"companyName",
 					"consenting",
@@ -125,12 +140,10 @@
 				],
 				"properties": {
 					"companyName": {
-						"type": "string",
-						"pattern": "^[ -~?-??-??-??-??-??-???]{1,160}$"
+						"$ref": "#/definitions/ukCompanyNameType"
 					},
 					"utr": {
-						"type": "string",
-						"pattern": "^[0-9]{10}$"
+						"$ref": "#/definitions/utrType"
 					},
 					"consenting": {
 						"type": "boolean"
@@ -143,6 +156,7 @@
 		},
 		"groupLevelElections": {
 			"type": "object",
+			"additionalProperties": false,
 			"required": [
 				"activeInterestAllowanceAlternativeCalculation",
 				"groupRatio",
@@ -153,6 +167,7 @@
 			"properties": {
 				"groupRatio": {
 					"type": "object",
+					"additionalProperties": false,
 					"required": [
 						"activeGroupEBITDAChargeableGains",
 						"isElected"
@@ -163,6 +178,7 @@
 						},
 						"groupRatioBlended": {
 							"type": "object",
+							"additionalProperties": false,
 							"required": ["isElected"],
 							"properties": {
 								"isElected": {
@@ -174,11 +190,11 @@
 									"maxItems": 2147483647,
 									"items": {
 										"type": "object",
+										"additionalProperties": false,
 										"required": ["groupName"],
 										"properties": {
 											"groupName": {
-												"type": "string",
-												"pattern": "^[ -~?-??-??-??-??-??-???]{1,160}$"
+												"$ref": "#/definitions/globalCompanyNameType"
 											},
 											"elections": {
 												"type": "array",
@@ -218,12 +234,38 @@
 		},
 		"numberOfUkCompanies": {
 			"type": "integer",
-			"format": "int32"
+			"format": "int32",
+			"minimum": 1
 		}
 	},
 	"definitions": {
+		"ukCompanyNameType": {
+			"type": "string",
+			"pattern": "^[ -~¡-ÿĀ-ʯḀ-ỿ‐-―'-‟₠-₿ÅK]{1,160}$"
+		},
+		"globalCompanyNameType": {
+			"type": "string",
+			"pattern": "^[ -~¡-ÿĀ-ʯḀ-ỿ‐-―'-‟₠-₿ÅK]{1,160}$"
+		},
+		"utrType": {
+			"type": "string",
+			"pattern": "^[0-9]{10}$"
+		},
+		"legalEntityIdentifierType": {
+			"type": "string",
+			"pattern": "^[0-9A-Z]{18}[0-9]{2}$"
+		},
+		"dateType": {
+			"type": "string",
+			"pattern": "^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-](0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$"
+		},
+		"explanatoryNotesShort": {
+			"type": "string",
+			"pattern": "^[ -~¢-¥©®±×÷‐₠-₿−-∝≈≠≣-≥]{1,5000}$"
+		},
 		"parentType": {
 			"type": "object",
+			"additionalProperties": false,
 			"required": [
 				"companyName",
 				"isUk"
@@ -233,30 +275,28 @@
 					"type": "boolean"
 				},
 				"companyName": {
-					"type": "string",
-					"pattern": "^[ -~?-??-??-??-??-??-???]{1,160}$"
+					"$ref": "#/definitions/globalCompanyNameType"
 				},
 				"ctutr": {
-					"type": "string",
-					"pattern": "[0-9]{10}"
+					"$ref": "#/definitions/utrType"
 				},
 				"sautr": {
-					"type": "string",
-					"pattern": "[0-9]{10}"
+					"$ref": "#/definitions/utrType"
 				},
 				"knownAs": {
-					"type": "string",
-					"pattern": "^[ -~?-??-??-??-??-??-???]{1,160}$"
+					"$ref": "#/definitions/globalCompanyNameType"
 				},
 				"countryOfIncorporation": {
-					"type": "string",
-					"enum": ["AD", "AE", "AF", "AG", "AI", "AL", "AM", "AN", "AO", "AQ", "AR", "AS", "AT", "AU", "AW", "AX", "AZ", "BA", "BB", "BD", "BE", "BF", "BG", "BH", "BI", "BJ", "BM", "BN", "BO", "BQ", "BR", "BS", "BT", "BV", "BW", "BY", "BZ", "CA", "CC", "CD", "CF", "CG", "CH", "CI", "CK", "CL", "CM", "CN", "CO", "CR", "CS", "CU", "CV", "CW", "CX", "CY", "CZ", "DD", "DE", "DJ", "DK"]
+					"$ref": "#/definitions/countryCodesType"
 				},
 				"legalEntityIdentifier": {
-					"type": "string",
-					"pattern": "^[0-9A-Z]{18}[0-9]{2}$"
+					"$ref": "#/definitions/legalEntityIdentifierType"
 				}
 			}
+		},
+		"countryCodesType": {
+			"type": "string",
+			"enum": ["AD", "AE", "AF", "AG", "AI", "AL", "AM", "AN", "AO", "AQ", "AR", "AS", "AT", "AU", "AW", "AX", "AZ", "BA", "BB", "BD", "BE", "BF", "BG", "BH", "BI", "BJ", "BM", "BN", "BO", "BQ", "BR", "BS", "BT", "BV", "BW", "BY", "BZ", "CA", "CC", "CD", "CF", "CG", "CH", "CI", "CK", "CL", "CM", "CN", "CO", "CR", "CS", "CU", "CV", "CW", "CX", "CY", "CZ", "DD", "DE", "DJ", "DK", "DM", "DO", "DZ", "EC", "EE", "EG", "EH", "ER", "ES", "ET", "EU", "FI", "FJ", "FK", "FM", "FO", "FR", "GA", "GD", "GE", "GF", "GG", "GH", "GI", "GL", "GM", "GN", "GP", "GQ", "GR", "GS", "GT", "GU", "GW", "GY", "HK", "HM", "HN", "HR", "HT", "HU", "ID", "IE", "IL", "IM", "IN", "IO", "IQ", "IR", "IS", "IT", "JE", "JM", "JO", "JP", "KE", "KG", "KH", "KI", "KM", "KN", "KP", "KR", "KW", "KY", "KZ", "LA", "LB", "LC", "LI", "LK", "LR", "LS", "LT", "LU", "LV", "LY", "MA", "MC", "MD", "ME", "MF", "MG", "MH", "MK", "ML", "MM", "MN", "MO", "MP", "MQ", "MR", "MS", "MT", "MU", "MV", "MW", "MX", "MY", "MZ", "NA", "NC", "NE", "NF", "NG", "NI", "NL", "NO", "NP", "NR", "NT", "NU", "NZ", "OM", "PA", "PE", "PF", "PG", "PH", "PK", "PL", "PM", "PN", "PR", "PS", "PT", "PW", "PY", "QA", "RE", "RO", "RS", "RU", "RW", "SA", "SB", "SC", "SD", "SE", "SG", "SH", "SI", "SJ", "SK", "SL", "SM", "SN", "SO", "SR", "SS", "ST", "SV", "SX", "SY", "SZ", "TC", "TD", "TF", "TG", "TH", "TJ", "TK", "TL", "TM", "TN", "TO", "TP", "TR", "TT", "TV", "TW", "TZ", "UA", "UG", "UK", "UM", "UN", "US", "UY", "UZ", "VA", "VC", "VE", "VG", "VI", "VN", "VU", "WF", "WS", "YE", "YT", "ZA", "ZM", "ZW"]
 		}
 	}
 }
