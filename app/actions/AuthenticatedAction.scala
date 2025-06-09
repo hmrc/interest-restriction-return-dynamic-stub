@@ -17,18 +17,16 @@
 package actions
 
 import com.google.inject.Inject
-import play.api.mvc.Results._
-import play.api.mvc._
-import play.api.http.HeaderNames
-
-import scala.concurrent._
-import scala.concurrent.Future
 import models.{ErrorResponse, FailureMessage}
-import play.api.libs.json._
+import play.api.http.HeaderNames
+import play.api.libs.json.*
+import play.api.mvc.*
+import play.api.mvc.Results.*
 
-class AuthenticatedAction @Inject() (override val parser: BodyParsers.Default)(implicit
-  override val executionContext: ExecutionContext
-) extends ActionBuilderImpl(parser) {
+import scala.concurrent.*
+
+class AuthenticatedAction @Inject() (val ec: ExecutionContext, override val parser: BodyParsers.Default)
+    extends ActionBuilderImpl(parser)(ec) {
 
   override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] =
     request.headers.get(HeaderNames.AUTHORIZATION) match {

@@ -35,7 +35,7 @@ sbt run
 
 **Authentication required:** `Yes, bearer token required`
 
-**Request Schema:** [Json Schema](conf/resources/irr/schemas/appoint_reporting_company.json)
+**Request Schema:** [Json Schema](conf/resources/irr/schemas/appoint.json)
 
 **Example Request:** [Request Json](conf/resources/irr/examples/example_appoint_reporting_company_body.json)
 
@@ -55,7 +55,7 @@ sbt run
 
 **Authentication required:** `Yes, bearer token required`
 
-**Request Schema:** [Json Schema](conf/resources/irr/schemas/revoke_reporting_company.json)
+**Request Schema:** [Json Schema](conf/resources/irr/schemas/revoke.json)
 
 **Example Request:** [Request Json](conf/resources/irr/examples/example_revoke_reporting_company_body.json)
 

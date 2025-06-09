@@ -27,12 +27,12 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Results.{BadRequest, InternalServerError}
 import play.api.mvc.{Headers, Result}
 
-import java.util
+import scala.collection.convert.AsScalaConverters
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 import scala.util.{Failure, Success, Try}
 
-object JsonSchemaHelper extends Logging {
+object JsonSchemaHelper extends Logging with AsScalaConverters {
 
   private final lazy val jsonMapper  = new ObjectMapper()
   private final lazy val jsonFactory = jsonMapper.getFactory
@@ -49,11 +49,12 @@ object JsonSchemaHelper extends Logging {
     jsonSchemaFactory.getSchema(schemaJson)
   }
 
-  private def validRequest(jsonSchema: JsValue, json: Option[JsValue]): Option[util.Set[ValidationMessage]] =
+  private def validRequest(jsonSchema: JsValue, json: Option[JsValue]): Option[Set[ValidationMessage]] =
     json.map { response =>
       val jsonParser: JsonParser              = jsonFactory.createParser(response.toString)
       val jsonNode: JsonNode                  = jsonMapper.readTree(jsonParser)
-      val result: util.Set[ValidationMessage] = loadRequestSchema(jsonSchema).validate(jsonNode)
+      val schema: JsonSchema              = loadRequestSchema(jsonSchema)
+      val result: Set[ValidationMessage] = asScala[ValidationMessage](schema.validate(jsonNode)).toSet
 
       result
     }
@@ -63,7 +64,7 @@ object JsonSchemaHelper extends Logging {
   ): Future[Result] =
     retrieveJsonSchema(schemaPath) match {
       case Success(schema) =>
-        val validationResult: Option[util.Set[ValidationMessage]] = JsonSchemaHelper.validRequest(schema, jsonBody)
+        val validationResult: Option[Set[ValidationMessage]] = JsonSchemaHelper.validRequest(schema, jsonBody)
         validationResult match {
           case Some(res) if res.isEmpty => f
           case Some(res)                =>

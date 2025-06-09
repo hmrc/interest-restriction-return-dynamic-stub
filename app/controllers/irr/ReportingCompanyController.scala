@@ -43,7 +43,7 @@ class ReportingCompanyController @Inject() (authenticatedAction: AuthenticatedAc
     logger.debug(s"[ReportingCompanyController][appoint] Received headers ${request.headers}")
 
     JsonSchemaHelper.applySchemaHeaderValidation(request.headers) {
-      JsonSchemaHelper.applySchemaValidation(schemaDir, "appoint_reporting_company.json", jsonBody) {
+      JsonSchemaHelper.applySchemaValidation(schemaDir, "appoint.json", jsonBody) {
         val agentName = jsonBody.flatMap(body => (body \ "agentDetails" \ "agentName").asOpt[String])
 
         val response = agentName match {
@@ -69,7 +69,7 @@ class ReportingCompanyController @Inject() (authenticatedAction: AuthenticatedAc
     logger.debug(s"[ReportingCompanyController][revoke] Received headers ${request.headers}")
 
     JsonSchemaHelper.applySchemaHeaderValidation(request.headers) {
-      JsonSchemaHelper.applySchemaValidation(schemaDir, "revoke_reporting_company.json", jsonBody) {
+      JsonSchemaHelper.applySchemaValidation(schemaDir, "revoke.json", jsonBody) {
         val agentName = jsonBody.flatMap(body => (body \ "agentDetails" \ "agentName").asOpt[String])
 
         val response = agentName match {
