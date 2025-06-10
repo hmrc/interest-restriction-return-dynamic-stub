@@ -16,7 +16,7 @@
 
 package controllers.irr
 
-import actions.AuthenticatedAction
+import base.BaseSpec
 import config.*
 import controllers.irr.ReportingCompanyController
 import file.FileReader.readFileAsJson
@@ -34,23 +34,22 @@ import java.util.UUID
 import scala.io.{BufferedSource, Source}
 import scala.util.Try
 
-class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with GuiceOneAppPerSuite {
+class ReportingCompanyControllerSpec extends BaseSpec {
 
-  val exampleAppointJsonBody: JsValue                             =
+  private val exampleAppointJsonBody: JsValue =
     readFileAsJson("conf/resources/irr/examples/example_appoint_reporting_company_body.json")
-  val exampleRevokeJsonBody: JsValue                              =
+  private val exampleRevokeJsonBody: JsValue  =
     readFileAsJson("conf/resources/irr/examples/example_revoke_reporting_company_body.json")
-  val FakeRequestWithHeaders: FakeRequest[AnyContentAsEmpty.type] =
-    FakeRequest("POST", "/").withHeaders(HeaderNames.AUTHORIZATION -> "Bearer 1234")
-
-  given ec: scala.concurrent.ExecutionContext  = scala.concurrent.ExecutionContext.global
-  val bodyParsers: BodyParsers.Default         = app.injector.instanceOf[BodyParsers.Default]
-  val authenticatedAction: AuthenticatedAction = new AuthenticatedAction(bodyParsers)
 
   "POST appoint irr reporting company" should {
     "return 201 when the payload is validated" in {
-      val fakeRequest = FakeRequestWithHeaders.withJsonBody(exampleAppointJsonBody)
-      val controller  = new ReportingCompanyController(authenticatedAction, Helpers.stubControllerComponents())
+      val fakeRequest = fakeRequestWithHeaders.withJsonBody(exampleAppointJsonBody)
+      val controller  = new ReportingCompanyController(
+        authenticatedAction,
+        correlationIdAction,
+        environmentAction,
+        Helpers.stubControllerComponents()
+      )
 
       val result = controller.appoint()(fakeRequest)
 
@@ -60,8 +59,13 @@ class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with Guic
     "return 201 when the payload is validated and the environment is valid" in {
       val env         = EnvironmentValues.environmentDev
       val fakeRequest =
-        FakeRequestWithHeaders.withJsonBody(exampleAppointJsonBody).withHeaders(HeaderKeys.environment -> env)
-      val controller  = new ReportingCompanyController(authenticatedAction, Helpers.stubControllerComponents())
+        fakeRequestWithHeaders.withJsonBody(exampleAppointJsonBody).withHeaders(HeaderKeys.environment -> env)
+      val controller  = new ReportingCompanyController(
+        authenticatedAction,
+        correlationIdAction,
+        environmentAction,
+        Helpers.stubControllerComponents()
+      )
       val result      = controller.appoint()(fakeRequest)
       status(result) shouldBe Status.CREATED
     }
@@ -69,8 +73,13 @@ class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with Guic
     "return 400 when the payload is validated and the environment is valid" in {
       val env         = "Invalid environment"
       val fakeRequest =
-        FakeRequestWithHeaders.withJsonBody(exampleAppointJsonBody).withHeaders(HeaderKeys.environment -> env)
-      val controller  = new ReportingCompanyController(authenticatedAction, Helpers.stubControllerComponents())
+        fakeRequestWithHeaders.withJsonBody(exampleAppointJsonBody).withHeaders(HeaderKeys.environment -> env)
+      val controller  = new ReportingCompanyController(
+        authenticatedAction,
+        correlationIdAction,
+        environmentAction,
+        Helpers.stubControllerComponents()
+      )
       val result      = controller.appoint()(fakeRequest)
       status(result)                                        shouldBe Status.BAD_REQUEST
       contentAsJson(result).as[ErrorResponse].failures.head shouldBe FailureMessage.InvalidEnvironment
@@ -79,8 +88,13 @@ class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with Guic
     "return 201 and a correlationId when the payload is validated and the correlationId exists" in {
       val uuid        = java.util.UUID.randomUUID().toString
       val fakeRequest =
-        FakeRequestWithHeaders.withJsonBody(exampleAppointJsonBody).withHeaders(HeaderKeys.correlationId -> uuid)
-      val controller  = new ReportingCompanyController(authenticatedAction, Helpers.stubControllerComponents())
+        fakeRequestWithHeaders.withJsonBody(exampleAppointJsonBody).withHeaders(HeaderKeys.correlationId -> uuid)
+      val controller  = new ReportingCompanyController(
+        authenticatedAction,
+        correlationIdAction,
+        environmentAction,
+        Helpers.stubControllerComponents()
+      )
       val result      = controller.appoint()(fakeRequest)
       status(result)                           shouldBe Status.CREATED
       headers(result) contains HeaderKeys.correlationId
@@ -90,8 +104,13 @@ class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with Guic
     "return 400 when the correlationId doesn't match the schema" in {
       val uuid        = "Not matching schema"
       val fakeRequest =
-        FakeRequestWithHeaders.withJsonBody(exampleAppointJsonBody).withHeaders(HeaderKeys.correlationId -> uuid)
-      val controller  = new ReportingCompanyController(authenticatedAction, Helpers.stubControllerComponents())
+        fakeRequestWithHeaders.withJsonBody(exampleAppointJsonBody).withHeaders(HeaderKeys.correlationId -> uuid)
+      val controller  = new ReportingCompanyController(
+        authenticatedAction,
+        correlationIdAction,
+        environmentAction,
+        Helpers.stubControllerComponents()
+      )
       val result      = controller.appoint()(fakeRequest)
       status(result)                                        shouldBe Status.BAD_REQUEST
       contentAsJson(result).as[ErrorResponse].failures.head shouldBe FailureMessage.InvalidCorrelationId
@@ -99,8 +118,13 @@ class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with Guic
 
     "returns 400 when the payload is invalid" in {
       val exampleInvalidJsonBody = exampleAppointJsonBody.as[JsObject] - "agentDetails"
-      val fakeRequest            = FakeRequestWithHeaders.withJsonBody(exampleInvalidJsonBody)
-      val controller             = new ReportingCompanyController(authenticatedAction, Helpers.stubControllerComponents())
+      val fakeRequest            = fakeRequestWithHeaders.withJsonBody(exampleInvalidJsonBody)
+      val controller             = new ReportingCompanyController(
+        authenticatedAction,
+        correlationIdAction,
+        environmentAction,
+        Helpers.stubControllerComponents()
+      )
 
       val result = controller.appoint()(fakeRequest)
 
@@ -109,8 +133,13 @@ class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with Guic
     }
 
     "returns a body containing acknowledgementReference when the payload is validated" in {
-      val fakeRequest = FakeRequestWithHeaders.withJsonBody(exampleAppointJsonBody)
-      val controller  = new ReportingCompanyController(authenticatedAction, Helpers.stubControllerComponents())
+      val fakeRequest = fakeRequestWithHeaders.withJsonBody(exampleAppointJsonBody)
+      val controller  = new ReportingCompanyController(
+        authenticatedAction,
+        correlationIdAction,
+        environmentAction,
+        Helpers.stubControllerComponents()
+      )
 
       val result = controller.appoint()(fakeRequest)
 
@@ -119,8 +148,13 @@ class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with Guic
 
     "returns a 500 when a ServerError agent name is passed" in {
       val amendedBody = changeAgentName(exampleAppointJsonBody, Some("ServerError"))
-      val fakeRequest = FakeRequestWithHeaders.withJsonBody(amendedBody)
-      val controller  = new ReportingCompanyController(authenticatedAction, Helpers.stubControllerComponents())
+      val fakeRequest = fakeRequestWithHeaders.withJsonBody(amendedBody)
+      val controller  = new ReportingCompanyController(
+        authenticatedAction,
+        correlationIdAction,
+        environmentAction,
+        Helpers.stubControllerComponents()
+      )
 
       val result = controller.appoint()(fakeRequest)
       status(result)                                        shouldBe Status.INTERNAL_SERVER_ERROR
@@ -129,8 +163,13 @@ class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with Guic
 
     "returns 503 when a Service unavailable agent name is passed" in {
       val amendedBody = changeAgentName(exampleAppointJsonBody, Some("ServiceUnavailable"))
-      val fakeRequest = FakeRequestWithHeaders.withJsonBody(amendedBody)
-      val controller  = new ReportingCompanyController(authenticatedAction, Helpers.stubControllerComponents())
+      val fakeRequest = fakeRequestWithHeaders.withJsonBody(amendedBody)
+      val controller  = new ReportingCompanyController(
+        authenticatedAction,
+        correlationIdAction,
+        environmentAction,
+        Helpers.stubControllerComponents()
+      )
 
       val result = controller.appoint()(fakeRequest)
       status(result)                                        shouldBe Status.SERVICE_UNAVAILABLE
@@ -139,8 +178,13 @@ class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with Guic
 
     "returns 401 when an Unauthorized agent name is passed" in {
       val amendedBody = changeAgentName(exampleAppointJsonBody, Some("Unauthorized"))
-      val fakeRequest = FakeRequestWithHeaders.withJsonBody(amendedBody)
-      val controller  = new ReportingCompanyController(authenticatedAction, Helpers.stubControllerComponents())
+      val fakeRequest = fakeRequestWithHeaders.withJsonBody(amendedBody)
+      val controller  = new ReportingCompanyController(
+        authenticatedAction,
+        correlationIdAction,
+        environmentAction,
+        Helpers.stubControllerComponents()
+      )
 
       val result = controller.appoint()(fakeRequest)
       status(result)                                        shouldBe Status.UNAUTHORIZED
@@ -148,8 +192,13 @@ class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with Guic
     }
 
     "returns 201 when a bearer token is passed" in {
-      val fakeRequest = FakeRequestWithHeaders.withJsonBody(exampleAppointJsonBody)
-      val controller  = new ReportingCompanyController(authenticatedAction, Helpers.stubControllerComponents())
+      val fakeRequest = fakeRequestWithHeaders.withJsonBody(exampleAppointJsonBody)
+      val controller  = new ReportingCompanyController(
+        authenticatedAction,
+        correlationIdAction,
+        environmentAction,
+        Helpers.stubControllerComponents()
+      )
 
       val result = controller.appoint()(fakeRequest)
       status(result) shouldBe Status.CREATED
@@ -157,7 +206,12 @@ class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with Guic
 
     "returns 401 when a bearer token is not passed" in {
       val fakeRequest = FakeRequest("POST", "/").withJsonBody(exampleAppointJsonBody)
-      val controller  = new ReportingCompanyController(authenticatedAction, Helpers.stubControllerComponents())
+      val controller  = new ReportingCompanyController(
+        authenticatedAction,
+        correlationIdAction,
+        environmentAction,
+        Helpers.stubControllerComponents()
+      )
 
       val result = controller.appoint()(fakeRequest)
       status(result)                                        shouldBe Status.UNAUTHORIZED
@@ -165,8 +219,13 @@ class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with Guic
     }
 
     "returns 400 when a body is empty" in {
-      val fakeRequest = FakeRequestWithHeaders
-      val controller  = new ReportingCompanyController(authenticatedAction, Helpers.stubControllerComponents())
+      val fakeRequest = fakeRequestWithHeaders
+      val controller  = new ReportingCompanyController(
+        authenticatedAction,
+        correlationIdAction,
+        environmentAction,
+        Helpers.stubControllerComponents()
+      )
 
       val result = controller.appoint()(fakeRequest)
       status(result)                                        shouldBe Status.BAD_REQUEST
@@ -175,8 +234,13 @@ class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with Guic
 
     "returns 201 when no agent name is passed" in {
       val amendedBody = changeAgentName(exampleAppointJsonBody, None)
-      val fakeRequest = FakeRequestWithHeaders.withJsonBody(amendedBody)
-      val controller  = new ReportingCompanyController(authenticatedAction, Helpers.stubControllerComponents())
+      val fakeRequest = fakeRequestWithHeaders.withJsonBody(amendedBody)
+      val controller  = new ReportingCompanyController(
+        authenticatedAction,
+        correlationIdAction,
+        environmentAction,
+        Helpers.stubControllerComponents()
+      )
 
       val result = controller.appoint()(fakeRequest)
       status(result) shouldBe Status.CREATED
@@ -185,8 +249,13 @@ class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with Guic
 
   "POST revoke reporting company" should {
     "return 201 when the payload is validated" in {
-      val fakeRequest = FakeRequestWithHeaders.withJsonBody(exampleRevokeJsonBody)
-      val controller  = new ReportingCompanyController(authenticatedAction, Helpers.stubControllerComponents())
+      val fakeRequest = fakeRequestWithHeaders.withJsonBody(exampleRevokeJsonBody)
+      val controller  = new ReportingCompanyController(
+        authenticatedAction,
+        correlationIdAction,
+        environmentAction,
+        Helpers.stubControllerComponents()
+      )
 
       val result = controller.revoke()(fakeRequest)
 
@@ -196,8 +265,13 @@ class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with Guic
     "return 201 when the payload is validated and the environment is valid" in {
       val env         = EnvironmentValues.environmentDev
       val fakeRequest =
-        FakeRequestWithHeaders.withJsonBody(exampleRevokeJsonBody).withHeaders(HeaderKeys.environment -> env)
-      val controller  = new ReportingCompanyController(authenticatedAction, Helpers.stubControllerComponents())
+        fakeRequestWithHeaders.withJsonBody(exampleRevokeJsonBody).withHeaders(HeaderKeys.environment -> env)
+      val controller  = new ReportingCompanyController(
+        authenticatedAction,
+        correlationIdAction,
+        environmentAction,
+        Helpers.stubControllerComponents()
+      )
       val result      = controller.revoke()(fakeRequest)
       status(result) shouldBe Status.CREATED
     }
@@ -205,8 +279,13 @@ class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with Guic
     "return 400 when the payload is validated and the environment is valid" in {
       val env         = "Invalid environment"
       val fakeRequest =
-        FakeRequestWithHeaders.withJsonBody(exampleRevokeJsonBody).withHeaders(HeaderKeys.environment -> env)
-      val controller  = new ReportingCompanyController(authenticatedAction, Helpers.stubControllerComponents())
+        fakeRequestWithHeaders.withJsonBody(exampleRevokeJsonBody).withHeaders(HeaderKeys.environment -> env)
+      val controller  = new ReportingCompanyController(
+        authenticatedAction,
+        correlationIdAction,
+        environmentAction,
+        Helpers.stubControllerComponents()
+      )
       val result      = controller.revoke()(fakeRequest)
       status(result)                                        shouldBe Status.BAD_REQUEST
       contentAsJson(result).as[ErrorResponse].failures.head shouldBe FailureMessage.InvalidEnvironment
@@ -215,9 +294,15 @@ class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with Guic
     "return 201 and a correlationId when the payload is validated and the correlationId exists" in {
       val uuid        = java.util.UUID.randomUUID().toString
       val fakeRequest =
-        FakeRequestWithHeaders.withJsonBody(exampleRevokeJsonBody).withHeaders(HeaderKeys.correlationId -> uuid)
-      val controller  = new ReportingCompanyController(authenticatedAction, Helpers.stubControllerComponents())
+        fakeRequestWithHeaders.withJsonBody(exampleRevokeJsonBody).withHeaders(HeaderKeys.correlationId -> uuid)
+      val controller  = new ReportingCompanyController(
+        authenticatedAction,
+        correlationIdAction,
+        environmentAction,
+        Helpers.stubControllerComponents()
+      )
       val result      = controller.revoke()(fakeRequest)
+      println("Result: " + headers(result))
       status(result)                           shouldBe Status.CREATED
       headers(result) contains HeaderKeys.correlationId
       header(HeaderKeys.correlationId, result) shouldBe Some(uuid)
@@ -226,8 +311,13 @@ class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with Guic
     "return 400 when the correlationId doesn't match the schema" in {
       val uuid        = "Not matching schema"
       val fakeRequest =
-        FakeRequestWithHeaders.withJsonBody(exampleRevokeJsonBody).withHeaders(HeaderKeys.correlationId -> uuid)
-      val controller  = new ReportingCompanyController(authenticatedAction, Helpers.stubControllerComponents())
+        fakeRequestWithHeaders.withJsonBody(exampleRevokeJsonBody).withHeaders(HeaderKeys.correlationId -> uuid)
+      val controller  = new ReportingCompanyController(
+        authenticatedAction,
+        correlationIdAction,
+        environmentAction,
+        Helpers.stubControllerComponents()
+      )
       val result      = controller.revoke()(fakeRequest)
       status(result)                                        shouldBe Status.BAD_REQUEST
       contentAsJson(result).as[ErrorResponse].failures.head shouldBe FailureMessage.InvalidCorrelationId
@@ -235,8 +325,13 @@ class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with Guic
 
     "returns 400 when the payload is invalid" in {
       val exampleInvalidJsonBody = exampleRevokeJsonBody.as[JsObject] - "agentDetails"
-      val fakeRequest            = FakeRequestWithHeaders.withJsonBody(exampleInvalidJsonBody)
-      val controller             = new ReportingCompanyController(authenticatedAction, Helpers.stubControllerComponents())
+      val fakeRequest            = fakeRequestWithHeaders.withJsonBody(exampleInvalidJsonBody)
+      val controller             = new ReportingCompanyController(
+        authenticatedAction,
+        correlationIdAction,
+        environmentAction,
+        Helpers.stubControllerComponents()
+      )
 
       val result = controller.revoke()(fakeRequest)
 
@@ -245,8 +340,13 @@ class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with Guic
     }
 
     "returns a body containing acknowledgementReference when the payload is validated" in {
-      val fakeRequest = FakeRequestWithHeaders.withJsonBody(exampleRevokeJsonBody)
-      val controller  = new ReportingCompanyController(authenticatedAction, Helpers.stubControllerComponents())
+      val fakeRequest = fakeRequestWithHeaders.withJsonBody(exampleRevokeJsonBody)
+      val controller  = new ReportingCompanyController(
+        authenticatedAction,
+        correlationIdAction,
+        environmentAction,
+        Helpers.stubControllerComponents()
+      )
 
       val result = controller.revoke()(fakeRequest)
 
@@ -255,8 +355,13 @@ class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with Guic
 
     "returns a 500 when a ServerError agent name is passed" in {
       val amendedBody = changeAgentName(exampleRevokeJsonBody, Some("ServerError"))
-      val fakeRequest = FakeRequestWithHeaders.withJsonBody(amendedBody)
-      val controller  = new ReportingCompanyController(authenticatedAction, Helpers.stubControllerComponents())
+      val fakeRequest = fakeRequestWithHeaders.withJsonBody(amendedBody)
+      val controller  = new ReportingCompanyController(
+        authenticatedAction,
+        correlationIdAction,
+        environmentAction,
+        Helpers.stubControllerComponents()
+      )
 
       val result = controller.revoke()(fakeRequest)
       status(result)                                        shouldBe Status.INTERNAL_SERVER_ERROR
@@ -265,8 +370,13 @@ class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with Guic
 
     "returns 503 when a Service unavailable agent name is passed" in {
       val amendedBody = changeAgentName(exampleRevokeJsonBody, Some("ServiceUnavailable"))
-      val fakeRequest = FakeRequestWithHeaders.withJsonBody(amendedBody)
-      val controller  = new ReportingCompanyController(authenticatedAction, Helpers.stubControllerComponents())
+      val fakeRequest = fakeRequestWithHeaders.withJsonBody(amendedBody)
+      val controller  = new ReportingCompanyController(
+        authenticatedAction,
+        correlationIdAction,
+        environmentAction,
+        Helpers.stubControllerComponents()
+      )
 
       val result = controller.revoke()(fakeRequest)
       status(result)                                        shouldBe Status.SERVICE_UNAVAILABLE
@@ -275,8 +385,13 @@ class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with Guic
 
     "returns 401 when an Unauthorized agent name is passed" in {
       val amendedBody = changeAgentName(exampleRevokeJsonBody, Some("Unauthorized"))
-      val fakeRequest = FakeRequestWithHeaders.withJsonBody(amendedBody)
-      val controller  = new ReportingCompanyController(authenticatedAction, Helpers.stubControllerComponents())
+      val fakeRequest = fakeRequestWithHeaders.withJsonBody(amendedBody)
+      val controller  = new ReportingCompanyController(
+        authenticatedAction,
+        correlationIdAction,
+        environmentAction,
+        Helpers.stubControllerComponents()
+      )
 
       val result = controller.revoke()(fakeRequest)
       status(result)                                        shouldBe Status.UNAUTHORIZED
@@ -284,8 +399,13 @@ class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with Guic
     }
 
     "returns 201 when a bearer token is passed" in {
-      val fakeRequest = FakeRequestWithHeaders.withJsonBody(exampleRevokeJsonBody)
-      val controller  = new ReportingCompanyController(authenticatedAction, Helpers.stubControllerComponents())
+      val fakeRequest = fakeRequestWithHeaders.withJsonBody(exampleRevokeJsonBody)
+      val controller  = new ReportingCompanyController(
+        authenticatedAction,
+        correlationIdAction,
+        environmentAction,
+        Helpers.stubControllerComponents()
+      )
 
       val result = controller.revoke()(fakeRequest)
       status(result) shouldBe Status.CREATED
@@ -293,7 +413,12 @@ class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with Guic
 
     "returns 401 when a bearer token is not passed" in {
       val fakeRequest = FakeRequest("POST", "/").withJsonBody(exampleRevokeJsonBody)
-      val controller  = new ReportingCompanyController(authenticatedAction, Helpers.stubControllerComponents())
+      val controller  = new ReportingCompanyController(
+        authenticatedAction,
+        correlationIdAction,
+        environmentAction,
+        Helpers.stubControllerComponents()
+      )
 
       val result = controller.revoke()(fakeRequest)
       status(result)                                        shouldBe Status.UNAUTHORIZED
@@ -301,8 +426,13 @@ class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with Guic
     }
 
     "returns 400 when a body is empty" in {
-      val fakeRequest = FakeRequestWithHeaders
-      val controller  = new ReportingCompanyController(authenticatedAction, Helpers.stubControllerComponents())
+      val fakeRequest = fakeRequestWithHeaders
+      val controller  = new ReportingCompanyController(
+        authenticatedAction,
+        correlationIdAction,
+        environmentAction,
+        Helpers.stubControllerComponents()
+      )
 
       val result = controller.revoke()(fakeRequest)
       status(result)                                        shouldBe Status.BAD_REQUEST
@@ -311,8 +441,13 @@ class ReportingCompanyControllerSpec extends AnyWordSpec with Matchers with Guic
 
     "returns 201 when no agent name is passed" in {
       val amendedBody = changeAgentName(exampleRevokeJsonBody, None)
-      val fakeRequest = FakeRequestWithHeaders.withJsonBody(amendedBody)
-      val controller  = new ReportingCompanyController(authenticatedAction, Helpers.stubControllerComponents())
+      val fakeRequest = fakeRequestWithHeaders.withJsonBody(amendedBody)
+      val controller  = new ReportingCompanyController(
+        authenticatedAction,
+        correlationIdAction,
+        environmentAction,
+        Helpers.stubControllerComponents()
+      )
 
       val result = controller.revoke()(fakeRequest)
       status(result) shouldBe Status.CREATED

@@ -16,10 +16,18 @@
 
 package models
 
-import play.api.libs.json.*
+import java.util.UUID
+import play.api.libs.json._
 
-case class ErrorResponse(failures: Seq[FailureMessage])
+case class IRRResponse(acknowledgementReference: String) {
+  def toJson: JsValue = Json.toJson(this)
+}
 
-object ErrorResponse {
-  given OFormat[ErrorResponse] = Json.format[ErrorResponse]
+object IRRResponse {
+
+  given OFormat[IRRResponse] = Json.format[IRRResponse]
+
+  def apply(): IRRResponse =
+    new IRRResponse(UUID.randomUUID().toString)
+
 }

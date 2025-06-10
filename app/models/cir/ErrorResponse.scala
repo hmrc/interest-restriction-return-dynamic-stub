@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package models
+package models.cir
 
 import play.api.libs.json.*
 
-case class ErrorResponse(failures: Seq[FailureMessage])
+case class ErrorResponse(origin: String, response: HipFailureMessage)
 
 object ErrorResponse {
+
   given OFormat[ErrorResponse] = Json.format[ErrorResponse]
+
 }

@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package models.cir
 
 import play.api.libs.json.*
 
-case class ErrorResponse(failures: Seq[FailureMessage])
+case class PlatformFailureMessages(failures: Seq[PlatformFailureMessage])
 
-object ErrorResponse {
-  given OFormat[ErrorResponse] = Json.format[ErrorResponse]
+object PlatformFailureMessages {
+  given OFormat[PlatformFailureMessages] = Json.format[PlatformFailureMessages]
 }

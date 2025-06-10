@@ -16,6 +16,8 @@
 
 package controllers
 
+import base.BaseSpec
+import controllers.irr.IrrBaseController
 import file.FileReader.readFileAsJson
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -27,7 +29,7 @@ import play.api.test.Helpers.*
 import scala.concurrent.Future
 import scala.io.{BufferedSource, Source}
 
-class JsonSchemaHelperSpec extends AnyWordSpec with Matchers {
+class JsonSchemaHelperIrrSpec extends BaseSpec with IrrBaseController {
 
   private val requestBodyJson: JsValue = readFileAsJson("conf/resources/irr/examples/example_submit_full_body.json")
 
@@ -36,7 +38,7 @@ class JsonSchemaHelperSpec extends AnyWordSpec with Matchers {
       "return 200 OK" when {
         "a valid schema path is found" in {
           val result: Future[Result] = JsonSchemaHelper.applySchemaValidation(
-            schemaDir = "resources/irr/schemas",
+            schemaDir = schemaDir,
             schemaFilename = "submit_full.json",
             jsonBody = Some(requestBodyJson)
           )(Future.successful(Ok))
@@ -48,7 +50,7 @@ class JsonSchemaHelperSpec extends AnyWordSpec with Matchers {
       "return 500 INTERNAL_SERVER_ERROR" when {
         "an invalid schema path is found" in {
           val result: Future[Result] = JsonSchemaHelper.applySchemaValidation(
-            schemaDir = "resources/irr/schemas",
+            schemaDir = schemaDir,
             schemaFilename = "submit_full_incorrect.json",
             jsonBody = Some(requestBodyJson)
           )(Future.successful(Ok))

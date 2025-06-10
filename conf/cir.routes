@@ -1,0 +1,4 @@
+POST       /appoint      controllers.cir.AppointController.call()
+# POST       /full         controllers.cir.FullReturnController.fullReturn()
+# POST       /revoke       controllers.cir.ReportingCompanyController.revoke()
+# POST       /return/abbreviated  controllers.cir.AbbreviatedReturnController.abbreviation()

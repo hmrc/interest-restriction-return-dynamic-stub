@@ -7,7 +7,7 @@ This is a protected backend microservice that stubs the functionality of the HMR
 ```bash
 sm2 --start IRR_ALL
 sm2 --stop IRR_DYNAMIC_STUB
-sbt run
+sbt clean run
 ```
 
 ## Running the tests

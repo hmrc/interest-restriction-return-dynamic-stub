@@ -18,6 +18,7 @@ package actions
 
 import com.google.inject.Inject
 import models.{ErrorResponse, FailureMessage}
+import play.api.Logging
 import play.api.http.HeaderNames
 import play.api.libs.json.*
 import play.api.mvc.*
@@ -25,12 +26,16 @@ import play.api.mvc.Results.*
 
 import scala.concurrent.*
 
-class AuthenticatedAction @Inject() (val ec: ExecutionContext, override val parser: BodyParsers.Default)
-    extends ActionBuilderImpl(parser)(ec) {
+class AuthenticatedAction @Inject() (val ec: ExecutionContext, val bodyParser: BodyParsers.Default)
+    extends ActionBuilderImpl(bodyParser)(ec)
+    with Logging {
 
-  override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] =
+  override def invokeBlock[A](request: Request[A], block: Request[A] => Future[Result]): Future[Result] = {
+    logger.info(s"[AuthenticatedAction][invokeBlock] Received headers: ${request.headers}")
+
     request.headers.get(HeaderNames.AUTHORIZATION) match {
       case None    => Future.successful(Unauthorized(Json.toJson(ErrorResponse(List(FailureMessage.MissingBearerToken)))))
       case Some(_) => block(request)
     }
+  }
 }

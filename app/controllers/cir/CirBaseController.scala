@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package controllers.cir
 
-import play.api.libs.json.*
+import controllers.BaseController
 
-case class ErrorResponse(failures: Seq[FailureMessage])
+trait CirBaseController extends BaseController {
 
-object ErrorResponse {
-  given OFormat[ErrorResponse] = Json.format[ErrorResponse]
+  override val schemaDir: String = "/resources/cir/schemas"
+
 }

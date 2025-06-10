@@ -16,7 +16,8 @@
 
 package controllers.irr
 
-import actions.AuthenticatedAction
+import actions.{AuthenticatedAction, CorrelationIdAction, EnvironmentAction}
+import config.HeaderKeys
 import controllers.JsonSchemaHelper
 import models.{ErrorResponse, FailureMessage}
 import play.api.Logging
@@ -29,20 +30,22 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.*
 
 @Singleton()
-class ReportingCompanyController @Inject() (authenticatedAction: AuthenticatedAction, cc: ControllerComponents)
-    extends BackendController(cc)
+class ReportingCompanyController @Inject() (
+  authenticatedAction: AuthenticatedAction,
+  correlationIdAction: CorrelationIdAction,
+  environmentAction: EnvironmentAction,
+  cc: ControllerComponents
+) extends BackendController(cc)
     with Logging
     with IrrBaseController {
 
-  given ec: ExecutionContext = cc.executionContext
+  given ExecutionContext = cc.executionContext
 
-  def appoint(): Action[AnyContent] = authenticatedAction.async { request =>
-    given Request[AnyContent]     = request
-    val jsonBody: Option[JsValue] = request.body.asJson
+  def appoint(): Action[AnyContent] =
+    (authenticatedAction andThen correlationIdAction andThen environmentAction).async { request =>
+      given Request[AnyContent]     = request
+      val jsonBody: Option[JsValue] = request.body.asJson
 
-    logger.debug(s"[ReportingCompanyController][appoint] Received headers ${request.headers}")
-
-    JsonSchemaHelper.applySchemaHeaderValidation(request.headers) {
       JsonSchemaHelper.applySchemaValidation(schemaDir, "appoint.json", jsonBody) {
         val agentName = jsonBody.flatMap(body => (body \ "agentDetails" \ "agentName").asOpt[String])
 
@@ -58,17 +61,20 @@ class ReportingCompanyController @Inject() (authenticatedAction: AuthenticatedAc
             Created(responseJson)
         }
 
-        Future.successful(response)
+        Future.successful(
+          response.withHeaders(
+            HeaderKeys.correlationId -> request.headers.get(HeaderKeys.correlationId).getOrElse(""),
+            HeaderKeys.environment   -> request.headers.get(HeaderKeys.environment).getOrElse("")
+          )
+        )
       }
     }
-  }
 
-  def revoke(): Action[AnyContent] = authenticatedAction.async { implicit request =>
-    val jsonBody: Option[JsValue] = request.body.asJson
+  def revoke(): Action[AnyContent] = (authenticatedAction andThen correlationIdAction andThen environmentAction).async {
+    implicit request =>
+      given Request[AnyContent]     = request
+      val jsonBody: Option[JsValue] = request.body.asJson
 
-    logger.debug(s"[ReportingCompanyController][revoke] Received headers ${request.headers}")
-
-    JsonSchemaHelper.applySchemaHeaderValidation(request.headers) {
       JsonSchemaHelper.applySchemaValidation(schemaDir, "revoke.json", jsonBody) {
         val agentName = jsonBody.flatMap(body => (body \ "agentDetails" \ "agentName").asOpt[String])
 
@@ -84,9 +90,13 @@ class ReportingCompanyController @Inject() (authenticatedAction: AuthenticatedAc
             Created(responseJson)
         }
 
-        Future.successful(response)
+        Future.successful(
+          response.withHeaders(
+            HeaderKeys.correlationId -> request.headers.get(HeaderKeys.correlationId).getOrElse(""),
+            HeaderKeys.environment   -> request.headers.get(HeaderKeys.environment).getOrElse("")
+          )
+        )
       }
-    }
   }
 
 }
