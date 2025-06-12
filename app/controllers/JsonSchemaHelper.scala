@@ -19,26 +19,21 @@ package controllers
 import com.fasterxml.jackson.core.{JsonFactory, JsonParser}
 import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
 import com.networknt.schema.*
-import config.{EnvironmentValues, HeaderKeys}
 import file.FileReader
 import models.{ErrorResponse, FailureMessage}
 import play.api.Logging
 import play.api.libs.json.{JsValue, Json}
+import play.api.mvc.Result
 import play.api.mvc.Results.{BadRequest, InternalServerError}
-import play.api.mvc.{Headers, Result}
 
-import java.util
-import scala.concurrent.{ExecutionContext, Future}
-import scala.io.Source
+import scala.collection.convert.AsScalaConverters
+import scala.concurrent.Future
 import scala.util.{Failure, Success, Try}
 
-object JsonSchemaHelper extends Logging {
+object JsonSchemaHelper extends Logging with AsScalaConverters {
 
   private final lazy val jsonMapper  = new ObjectMapper()
   private final lazy val jsonFactory = jsonMapper.getFactory
-
-  private final lazy val correlationIdRegex =
-    "^[0-9a-fA-F]{8}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{12}$"
 
   private def loadRequestSchema(requestSchema: JsValue): JsonSchema = {
     val schemaMapper: ObjectMapper           = new ObjectMapper()
@@ -49,11 +44,12 @@ object JsonSchemaHelper extends Logging {
     jsonSchemaFactory.getSchema(schemaJson)
   }
 
-  private def validRequest(jsonSchema: JsValue, json: Option[JsValue]): Option[util.Set[ValidationMessage]] =
+  private def validRequest(jsonSchema: JsValue, json: Option[JsValue]): Option[Set[ValidationMessage]] =
     json.map { response =>
-      val jsonParser: JsonParser              = jsonFactory.createParser(response.toString)
-      val jsonNode: JsonNode                  = jsonMapper.readTree(jsonParser)
-      val result: util.Set[ValidationMessage] = loadRequestSchema(jsonSchema).validate(jsonNode)
+      val jsonParser: JsonParser         = jsonFactory.createParser(response.toString)
+      val jsonNode: JsonNode             = jsonMapper.readTree(jsonParser)
+      val schema: JsonSchema             = loadRequestSchema(jsonSchema)
+      val result: Set[ValidationMessage] = asScala[ValidationMessage](schema.validate(jsonNode)).toSet
 
       result
     }
@@ -63,7 +59,7 @@ object JsonSchemaHelper extends Logging {
   ): Future[Result] =
     retrieveJsonSchema(schemaPath) match {
       case Success(schema) =>
-        val validationResult: Option[util.Set[ValidationMessage]] = JsonSchemaHelper.validRequest(schema, jsonBody)
+        val validationResult: Option[Set[ValidationMessage]] = JsonSchemaHelper.validRequest(schema, jsonBody)
         validationResult match {
           case Some(res) if res.isEmpty => f
           case Some(res)                =>
@@ -76,10 +72,6 @@ object JsonSchemaHelper extends Logging {
         Future.successful(InternalServerError(""))
     }
 
-  def applySchemaValidation(schemaDir: String, schemaFilename: String, jsonBody: Option[JsValue])(
-    f: => Future[Result]
-  ): Future[Result] = applySchemaValidation(s"$schemaDir/$schemaFilename", jsonBody)(f)
-
   private def retrieveJsonSchema(schemaPath: String): Try[JsValue] = {
     logger.info(s"[JsonSchemaHelper][retrieveJsonSchema] Schema path: $schemaPath")
 
@@ -87,32 +79,8 @@ object JsonSchemaHelper extends Logging {
     jsonSchema.map(Json.parse)
   }
 
-  def applySchemaHeaderValidation(
-    headers: Headers
-  )(f: => Future[Result])(implicit ec: ExecutionContext): Future[Result] = {
-    val maybeCorrelationId: Option[String] = headers.get(HeaderKeys.correlationId)
-    val maybeEnvironment: Option[String]   = headers.get(HeaderKeys.environment)
+  def applySchemaValidation(schemaDir: String, schemaFilename: String, jsonBody: Option[JsValue])(
+    f: => Future[Result]
+  ): Future[Result] = applySchemaValidation(s"$schemaDir/$schemaFilename", jsonBody)(f)
 
-    val correlationIdResult: Future[Result] = maybeCorrelationId match {
-      case Some(correlationId) if isValidCorrelationId(correlationId) =>
-        f.map(_.withHeaders(HeaderKeys.correlationId -> correlationId))
-      case Some(_)                                                    =>
-        Future.successful(BadRequest(Json.toJson(ErrorResponse(List(FailureMessage.InvalidCorrelationId)))))
-      case _                                                          => f
-    }
-
-    maybeEnvironment match {
-      case Some(environment) if isValidEnvironment(environment) => correlationIdResult
-      case Some(_)                                              =>
-        Future.successful(BadRequest(Json.toJson(ErrorResponse(List(FailureMessage.InvalidEnvironment)))))
-      case _                                                    => correlationIdResult
-    }
-
-  }
-
-  private def isValidEnvironment(environment: String): Boolean =
-    EnvironmentValues.all.contains(environment)
-
-  private def isValidCorrelationId(correlationId: String): Boolean =
-    correlationId.matches(correlationIdRegex)
 }

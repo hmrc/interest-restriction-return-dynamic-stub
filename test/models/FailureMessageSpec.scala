@@ -16,11 +16,10 @@
 
 package models
 
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpec
+import base.BaseSpec
 import play.api.libs.json.*
 
-class FailureMessageSpec extends AnyWordSpec with Matchers {
+class FailureMessageSpec extends BaseSpec {
 
   val failureMessages: List[FailureMessage] =
     List(

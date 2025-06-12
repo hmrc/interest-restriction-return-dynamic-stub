@@ -16,12 +16,14 @@
 
 package controllers.irr
 
-import actions.AuthenticatedAction
+import actions.{AuthenticatedAction, CorrelationIdAction, EnvironmentAction}
+import config.HeaderKeys
 import controllers.JsonSchemaHelper
 import models.{ErrorResponse, FailureMessage}
 import play.api.Logging
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.*
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import java.util.UUID.randomUUID
@@ -29,20 +31,22 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.*
 
 @Singleton()
-class AbbreviatedReturnController @Inject() (authenticatedAction: AuthenticatedAction, cc: ControllerComponents)
-    extends BackendController(cc)
+class AbbreviatedReturnController @Inject() (
+  authenticatedAction: AuthenticatedAction,
+  correlationIdAction: CorrelationIdAction,
+  environmentAction: EnvironmentAction,
+  cc: ControllerComponents
+) extends BackendController(cc)
     with Logging
     with IrrBaseController {
 
-  given ec: ExecutionContext = cc.executionContext
+  given ExecutionContext = cc.executionContext
 
-  def abbreviation(): Action[AnyContent] = authenticatedAction.async { request =>
-    given Request[AnyContent]     = request
-    val jsonBody: Option[JsValue] = request.body.asJson
+  def abbreviation(): Action[AnyContent] =
+    (authenticatedAction andThen correlationIdAction andThen environmentAction).async { request =>
+      given Request[AnyContent]     = request
+      val jsonBody: Option[JsValue] = request.body.asJson
 
-    logger.debug(s"[AbbreviatedReturnController][abbreviation] Received headers ${request.headers}")
-
-    JsonSchemaHelper.applySchemaHeaderValidation(request.headers) {
       JsonSchemaHelper.applySchemaValidation(schemaDir, "abbreviated.json", jsonBody) {
         val agentName = jsonBody.flatMap(body => (body \ "agentDetails" \ "agentName").asOpt[String])
 
@@ -58,9 +62,13 @@ class AbbreviatedReturnController @Inject() (authenticatedAction: AuthenticatedA
             Created(responseJson)
         }
 
-        Future.successful(response)
+        Future.successful(
+          response.withHeaders(
+            HeaderKeys.correlationId -> request.headers.get(HeaderKeys.correlationId).getOrElse(""),
+            HeaderKeys.environment   -> request.headers.get(HeaderKeys.environment).getOrElse("")
+          )
+        )
       }
     }
-  }
 
 }

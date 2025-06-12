@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package models.cir
 
 import play.api.libs.json.*
 
-case class ErrorResponse(failures: Seq[FailureMessage])
+case class HipFailureMessage(timestamp: String, error: String, path: String, errors: Seq[String])
 
-object ErrorResponse {
-  given OFormat[ErrorResponse] = Json.format[ErrorResponse]
+object HipFailureMessage {
+  given OFormat[HipFailureMessage] = Json.format[HipFailureMessage]
 }

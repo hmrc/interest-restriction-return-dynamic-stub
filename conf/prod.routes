@@ -3,3 +3,4 @@
 ->         /                                                        health.Routes
 
 ->         /organisations/interest-restrictions-return              irr.Routes
+->         /cir                                                     cir.Routes

@@ -1,0 +1,44 @@
+{
+  "agentDetails": {
+    "agentActingOnBehalfOfCompany": true,
+    "agentName": "AAgent"
+  },
+  "reportingCompany": {
+    "companyName": "ACompany",
+    "ctutr": "1123456789",
+    "sameAsUltimateParent": true
+  },
+  "isReportingCompanyAppointingItself": false,
+  "identityOfAppointingCompany": {
+    "companyName": "BCompany",
+    "countryOfIncorporation": "UK",
+    "ctutr": "9999999999",
+    "legalEntityIdentifier": "Z29900T8BM49AURSDO53"
+  },
+  "authorisingCompanies": [
+    {
+      "companyName": "CCompany",
+      "utr": "5555555555",
+      "consenting": true
+    },
+    {
+      "companyName": "D-Company, with unusual chars & % ! | ~ #",
+      "utr": "1122334455",
+      "consenting": true
+    }
+  ],
+  "ultimateParentCompany": {
+    "isUk": true,
+    "companyName": "E*Company$$",
+    "ctutr": "0000000000",
+    "sautr": "1237658890",
+    "knownAs": "655 Squadron",
+    "countryOfIncorporation": "ZA",
+    "legalEntityIdentifier": "549300QKDHYRRQH2MB86"
+  },
+  "accountingPeriod": {
+    "startDate": "2018-11-01",
+    "endDate": "2019-12-01"
+  },
+  "declaration": true
+}

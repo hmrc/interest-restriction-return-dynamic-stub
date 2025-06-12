@@ -16,11 +16,10 @@
 
 package models
 
-import org.scalatest.matchers.should.Matchers
-import org.scalatest.wordspec.AnyWordSpec
+import base.BaseSpec
 import play.api.libs.json.*
 
-class ErrorResponseSpec extends AnyWordSpec with Matchers {
+class ErrorResponseSpec extends BaseSpec {
 
   val failureMessages: List[FailureMessage] =
     List(
@@ -102,4 +101,152 @@ class ErrorResponseSpec extends AnyWordSpec with Matchers {
 
   }
 
+  "ErrorResponse" when {
+    val failure1 = FailureMessage("TYPE1", "First error")
+    val failure2 = FailureMessage("TYPE2", "Second error")
+
+    "creating instances" should {
+      "handle empty list of failures" in {
+        val response = ErrorResponse(List.empty)
+        response.failures shouldBe empty
+      }
+
+      "handle single failure" in {
+        val response = ErrorResponse(List(failure1))
+        response.failures shouldBe List(failure1)
+      }
+
+      "handle multiple failures" in {
+        val response = ErrorResponse(List(failure1, failure2))
+        response.failures should contain theSameElementsAs List(failure1, failure2)
+      }
+    }
+
+    "JSON formatting" should {
+      "correctly serialize using Json.toJson" in {
+        val response     = ErrorResponse(List(failure1, failure2))
+        val expectedJson = Json.obj(
+          "failures" -> Json.arr(
+            Json.obj("code" -> "TYPE1", "reason" -> "First error"),
+            Json.obj("code" -> "TYPE2", "reason" -> "Second error")
+          )
+        )
+
+        Json.toJson(response) shouldBe expectedJson
+      }
+
+      "correctly serialize empty list" in {
+        val response     = ErrorResponse(List.empty)
+        val expectedJson = Json.obj("failures" -> Json.arr())
+
+        Json.toJson(response) shouldBe expectedJson
+      }
+
+      "correctly deserialize from JSON" in {
+        val json = Json.obj(
+          "failures" -> Json.arr(
+            Json.obj("code" -> "TYPE1", "reason" -> "First error"),
+            Json.obj("code" -> "TYPE2", "reason" -> "Second error")
+          )
+        )
+
+        json.validate[ErrorResponse] shouldBe JsSuccess(ErrorResponse(List(failure1, failure2)))
+      }
+
+      "correctly deserialize empty array" in {
+        val json = Json.obj("failures" -> Json.arr())
+        json.validate[ErrorResponse] shouldBe JsSuccess(ErrorResponse(List.empty))
+      }
+
+      "fail to deserialize null failures" in {
+        val json = Json.obj("failures" -> JsNull)
+        json.validate[ErrorResponse].isError shouldBe true
+      }
+
+      "fail to deserialize when failures field is missing" in {
+        val json = Json.obj()
+        json.validate[ErrorResponse].isError shouldBe true
+      }
+
+      "fail to deserialize invalid failure messages" in {
+        val json = Json.obj(
+          "failures" -> Json.arr(
+            Json.obj("invalid" -> "object")
+          )
+        )
+        json.validate[ErrorResponse].isError shouldBe true
+      }
+    }
+
+    "OFormat instance" should {
+      "be available implicitly" in {
+        summon[OFormat[ErrorResponse]] shouldBe ErrorResponse.given_OFormat_ErrorResponse
+      }
+
+      "handle round trip conversion" in {
+        val original = ErrorResponse(List(failure1, failure2))
+        val json     = Json.toJson(original)
+        val parsed   = json.as[ErrorResponse]
+
+        parsed shouldBe original
+      }
+    }
+
+    "case class features" should {
+      "implement equals correctly" in {
+        val response1 = ErrorResponse(List(failure1, failure2))
+        val response2 = ErrorResponse(List(failure1, failure2))
+        val response3 = ErrorResponse(List(failure2, failure1)) // different order
+
+        response1 shouldBe response2 // same content, same order
+        response1   should not be response3 // same content, different order
+      }
+
+      "implement hashCode correctly" in {
+        val response1 = ErrorResponse(List(failure1, failure2))
+        val response2 = ErrorResponse(List(failure1, failure2))
+        val set       = Set(response1, response2)
+
+        set.size shouldBe 1 // due to correct hashCode implementation
+      }
+
+      "implement toString sensibly" in {
+        val response = ErrorResponse(List(failure1))
+        response.toString should include("TYPE1")
+        response.toString should include("First error")
+      }
+    }
+
+    "companion object" should {
+      "support creating response with varargs" in {
+        val response = ErrorResponse(Seq(failure1, failure2))
+        response.failures shouldBe List(failure1, failure2)
+      }
+
+    }
+
+    "handling edge cases" should {
+      "handle large number of failures" in {
+        val largeList = List.fill(1000)(failure1)
+        val response  = ErrorResponse(largeList)
+        response.failures                         should have size 1000
+        Json.toJson(response).as[ErrorResponse] shouldBe response // verify JSON serialization works with large lists
+      }
+
+      "preserve duplicates in failure list" in {
+        val duplicates = List(failure1, failure1, failure2)
+        val response   = ErrorResponse(duplicates)
+        response.failures should have size 3
+        response.failures should contain theSameElementsInOrderAs duplicates
+      }
+
+      "maintain list order in equality checks" in {
+        val response1 = ErrorResponse(List(failure1, failure2))
+        val response2 = ErrorResponse(List(failure2, failure1))
+
+        response1          should not be response2
+        response1.failures should not be response2.failures
+      }
+    }
+  }
 }

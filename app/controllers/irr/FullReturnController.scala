@@ -16,7 +16,8 @@
 
 package controllers.irr
 
-import actions.AuthenticatedAction
+import actions.{AuthenticatedAction, CorrelationIdAction, EnvironmentAction}
+import config.HeaderKeys
 import controllers.JsonSchemaHelper
 import models.{ErrorResponse, FailureMessage}
 import play.api.Logging
@@ -29,20 +30,22 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.*
 
 @Singleton()
-class FullReturnController @Inject() (authenticatedAction: AuthenticatedAction, cc: ControllerComponents)
-    extends BackendController(cc)
+class FullReturnController @Inject() (
+  authenticatedAction: AuthenticatedAction,
+  correlationIdAction: CorrelationIdAction,
+  environmentAction: EnvironmentAction,
+  cc: ControllerComponents
+) extends BackendController(cc)
     with Logging
     with IrrBaseController {
 
-  given ec: ExecutionContext = cc.executionContext
+  given ExecutionContext = cc.executionContext
 
-  def fullReturn(): Action[AnyContent] = authenticatedAction.async { request =>
-    given Request[AnyContent]     = request
-    val jsonBody: Option[JsValue] = request.body.asJson
+  def fullReturn(): Action[AnyContent] =
+    (authenticatedAction andThen correlationIdAction andThen environmentAction).async { request =>
+      given Request[AnyContent]     = request
+      val jsonBody: Option[JsValue] = request.body.asJson
 
-    logger.debug(s"[FullReturnController][fullReturn] Received headers ${request.headers}")
-
-    JsonSchemaHelper.applySchemaHeaderValidation(request.headers) {
       JsonSchemaHelper.applySchemaValidation(schemaDir, "submit_full.json", jsonBody) {
         val agentName = jsonBody.flatMap(body => (body \ "agentDetails" \ "agentName").asOpt[String])
 
@@ -57,10 +60,15 @@ class FullReturnController @Inject() (authenticatedAction: AuthenticatedAction, 
             val responseJson             = Json.parse(responseString)
             Created(responseJson)
         }
-        Future.successful(response)
-      }
-    }
 
-  }
+        Future.successful(
+          response.withHeaders(
+            HeaderKeys.correlationId -> request.headers.get(HeaderKeys.correlationId).getOrElse(""),
+            HeaderKeys.environment   -> request.headers.get(HeaderKeys.environment).getOrElse("")
+          )
+        )
+      }
+
+    }
 
 }

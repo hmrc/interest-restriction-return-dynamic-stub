@@ -1,0 +1,237 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Submit Full IRR Request Schema",
+  "type": "object",
+  "required": [
+    "agentDetails",
+    "declaration",
+    "groupCompanyDetails",
+    "groupLevelAmount",
+    "groupLevelElections",
+    "groupSubjectToInterestReactivation",
+    "groupSubjectToInterestRestrictions",
+    "publicInfrastructure",
+    "reportingCompany",
+    "returnContainsEstimates",
+    "submissionType",
+    "totalReactivation",
+    "totalRestrictions",
+    "ukCompanies"
+  ],
+  "properties": {
+    "declaration": {
+      "type": "boolean"
+    },
+    "agentDetails": {
+      "type": "object",
+      "required": ["agentActingOnBehalfOfCompany"],
+      "properties": {
+        "agentActingOnBehalfOfCompany": {
+          "type": "boolean"
+        },
+        "agentName": {
+          "type": "string",
+          "pattern": "^[ -~¡-ÿĀ-ʯḀ-ỿ‐-―‘-‟₠-₿ÅK]{1,160}$"
+        }
+      }
+    },
+    "reportingCompany": {
+      "type": "object",
+      "required": [
+        "companyName",
+        "ctutr",
+        "sameAsUltimateParent"
+      ],
+      "properties": {
+        "companyName": {
+          "type": "string",
+          "pattern": "^[ -~¡-ÿĀ-ʯḀ-ỿ‐-―‘-‟₠-₿ÅK]{1,160}$"
+        },
+        "ctutr": {
+          "type": "string",
+          "pattern": "^[0-9]{10}"
+        },
+        "sameAsUltimateParent": {
+          "type": "boolean"
+        }
+      }
+    },
+    "publicInfrastructure": {
+      "type": "boolean"
+    },
+    "groupCompanyDetails": {
+      "type": "object",
+      "required": [
+        "accountingPeriod",
+        "totalCompanies"
+      ],
+      "properties": {
+        "totalCompanies": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "accountingPeriod": {
+          "type": "object",
+          "required": [
+            "endDate",
+            "startDate"
+          ],
+          "properties": {
+            "startDate": {
+              "type": "string",
+              "pattern": "^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-](0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$"
+            },
+            "endDate": {
+              "type": "string",
+              "pattern": "^(((19|20)([2468][048]|[13579][26]|0[48])|2000)[-]02[-]29|((19|20)[0-9]{2}[-](0[469]|11)[-](0[1-9]|1[0-9]|2[0-9]|30)|(19|20)[0-9]{2}[-](0[13578]|1[02])[-](0[1-9]|[12][0-9]|3[01])|(19|20)[0-9]{2}[-]02[-](0[1-9]|1[0-9]|2[0-8])))$"
+            }
+          }
+        }
+      }
+    },
+    "submissionType": {
+      "type": "string",
+      "enum": ["original", "revised"]
+    },
+    "revisedReturnDetails": {
+      "type": "string",
+      "pattern": "^[ -~¢-¥©®±×÷‐₠-₿−-∝≈≠≣-≥]{1,5000}$"
+    },
+    "angie": {
+      "type": "number",
+      "minimum": 0
+    },
+    "returnContainsEstimates": {
+      "type": "boolean"
+    },
+    "groupEstimateReason": {
+      "type": "string",
+      "pattern": "^[ -~¢-¥©®±×÷‐₠-₿−-∝≈≠≣-≥]{1,10000}$"
+    },
+    "companiesEstimateReason": {
+      "type": "string",
+      "pattern": "^[ -~¢-¥©®±×÷‐₠-₿−-∝≈≠≣-≥]{1,10000}$"
+    },
+    "groupSubjectToInterestRestrictions": {
+      "type": "boolean"
+    },
+    "groupSubjectToInterestReactivation": {
+      "type": "boolean"
+    },
+    "groupLevelElections": {
+      "type": "object",
+      "required": [
+        "activeInterestAllowanceAlternativeCalculation",
+        "groupRatio",
+        "interestAllowanceAlternativeCalculation",
+        "interestAllowanceConsolidatedPartnership",
+        "interestAllowanceNonConsolidatedInvestment"
+      ],
+      "properties": {
+        "groupRatio": {
+          "type": "object",
+          "required": [
+            "activeGroupEBITDAChargeableGains",
+            "isElected"
+          ],
+          "properties": {
+            "isElected": {
+              "type": "boolean"
+            },
+            "groupEBITDAChargeableGains": {
+              "type": "boolean"
+            },
+            "activeGroupEBITDAChargeableGains": {
+              "type": "boolean"
+            }
+          }
+        },
+        "interestAllowanceAlternativeCalculation": {
+          "type": "boolean"
+        },
+        "activeInterestAllowanceAlternativeCalculation": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ukCompanies": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 2147483647,
+      "items": {
+        "type": "object",
+        "required": [
+          "companyName",
+          "consenting",
+          "netTaxInterestExpense",
+          "netTaxInterestIncome",
+          "qicElection",
+          "taxEBITDA",
+          "utr"
+        ],
+        "properties": {
+          "companyName": {
+            "type": "string",
+            "pattern": "^[ -~¡-ÿĀ-ʯḀ-ỿ‐-―‘-‟₠-₿ÅK]{1,160}$"
+          },
+          "utr": {
+            "type": "string",
+            "pattern": "^[0-9]{10}$"
+          },
+          "consenting": {
+            "type": "boolean"
+          },
+          "qicElection": {
+            "type": "boolean"
+          },
+          "netTaxInterestExpense": {
+            "type": "number",
+            "minimum": 0
+          },
+          "netTaxInterestIncome": {
+            "type": "number",
+            "minimum": 0
+          },
+          "taxEBITDA": {
+            "type": "number"
+          }
+        }
+      }
+    },
+    "groupLevelAmount": {
+      "type": "object",
+      "required": [
+        "interestAllowanceBroughtForward",
+        "interestAllowanceForPeriod",
+        "interestCapacityForPeriod",
+        "interestReactivationCap"
+      ],
+      "properties": {
+        "interestReactivationCap": {
+          "type": "number",
+          "minimum": 0
+        },
+        "interestAllowanceBroughtForward": {
+          "type": "number",
+          "minimum": 0
+        },
+        "interestAllowanceForPeriod": {
+          "type": "number",
+          "minimum": 0
+        },
+        "interestCapacityForPeriod": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "totalReactivation": {
+      "type": "number",
+      "minimum": 0
+    },
+    "totalRestrictions": {
+      "type": "number",
+      "minimum": 0
+    }
+  }
+}
