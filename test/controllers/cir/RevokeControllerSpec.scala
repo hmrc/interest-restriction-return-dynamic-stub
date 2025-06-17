@@ -30,12 +30,12 @@ import play.api.test.Helpers.*
 import java.util.UUID
 import scala.concurrent.Future
 
-class AppointControllerSpec extends BaseSpec {
+class RevokeControllerSpec extends BaseSpec {
 
   private val exampleJsonBody: JsValue =
-    readFileAsJson("conf/resources/cir/examples/example_appoint_reporting_company_body.json")
+    readFileAsJson("conf/resources/cir/examples/example_revoke_reporting_company_body.json")
 
-  private val controller = new AppointController(
+  private val controller = new RevokeController(
     authenticatedAction,
     correlationIdAction,
     stubControllerComponents()
@@ -57,7 +57,7 @@ class AppointControllerSpec extends BaseSpec {
     controller.call()(request)
   }
 
-  "AppointController" when {
+  "RevokeController" when {
     "call() is called" should {
       "return CREATED with IRRResponse for valid request" in {
         val result = performRequest(validRequestJson)
