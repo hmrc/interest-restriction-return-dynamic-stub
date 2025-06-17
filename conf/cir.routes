@@ -1,4 +1,4 @@
 POST       /appoint      controllers.cir.AppointController.call()
 POST       /revoke       controllers.cir.RevokeController.call()
-# POST       /full         controllers.cir.FullReturnController.call()
+POST       /return       controllers.cir.FullReturnController.call()
 # POST       /return/abbreviated  controllers.cir.AbbreviatedReturnController.call()
