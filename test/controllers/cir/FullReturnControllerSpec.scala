@@ -30,12 +30,12 @@ import play.api.test.Helpers.*
 import java.util.UUID
 import scala.concurrent.Future
 
-class RevokeControllerSpec extends BaseSpec {
+class FullReturnControllerSpec extends BaseSpec {
 
   private val exampleJsonBody: JsValue =
-    readFileAsJson("conf/resources/cir/examples/example_revoke_reporting_company_body.json")
+    readFileAsJson("conf/resources/cir/examples/example_submit_full_body.json")
 
-  private val controller = new RevokeController(
+  private val controller = new FullReturnController(
     authenticatedAction,
     correlationIdAction,
     stubControllerComponents()
@@ -57,7 +57,7 @@ class RevokeControllerSpec extends BaseSpec {
     controller.call()(request)
   }
 
-  "RevokeController" when {
+  "FullReturnController" when {
     "call() is called" should {
       "return OK with IRRResponse for valid request" in {
         val result = performRequest(validRequestJson)

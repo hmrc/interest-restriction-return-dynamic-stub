@@ -51,7 +51,7 @@ class RevokeController @Inject() (
       case Some("ServiceUnavailable") => Future.successful(ServiceUnavailable(ErrorMessages.SERVER_UNAVAILABLE.asJson))
       case _                          =>
         JsonSchemaHelper.applySchemaValidation(schemaDir, "revoke.json", jsonBody) {
-          Future.successful(Created(IRRResponse().toJson))
+          Future.successful(Ok(IRRResponse().toJson))
         }
     }
 

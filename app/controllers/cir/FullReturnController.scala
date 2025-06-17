@@ -30,7 +30,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton()
-class AppointController @Inject() (
+class FullReturnController @Inject() (
   authenticatedAction: AuthenticatedAction,
   correlationIdAction: CorrelationIdAction,
   cc: ControllerComponents
@@ -50,7 +50,7 @@ class AppointController @Inject() (
       case Some("ServerError")        => Future.successful(InternalServerError(ErrorMessages.INTERNAL_SERVER_ERROR.asJson))
       case Some("ServiceUnavailable") => Future.successful(ServiceUnavailable(ErrorMessages.SERVER_UNAVAILABLE.asJson))
       case _                          =>
-        JsonSchemaHelper.applySchemaValidation(schemaDir, "appoint.json", jsonBody) {
+        JsonSchemaHelper.applySchemaValidation(schemaDir, "submit_full.json", jsonBody) {
           Future.successful(Ok(IRRResponse().toJson))
         }
     }

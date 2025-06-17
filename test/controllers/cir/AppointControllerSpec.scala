@@ -59,10 +59,10 @@ class AppointControllerSpec extends BaseSpec {
 
   "AppointController" when {
     "call() is called" should {
-      "return CREATED with IRRResponse for valid request" in {
+      "return OK with IRRResponse for valid request" in {
         val result = performRequest(validRequestJson)
 
-        status(result)                                               shouldBe CREATED
+        status(result)                                               shouldBe OK
         contentAsJson(result).as[IRRResponse].acknowledgementReference should not be empty
         headers(result).get(HeaderKeys.correlationId)                shouldBe Some(correlationId)
       }
