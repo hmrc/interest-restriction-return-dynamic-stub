@@ -63,7 +63,7 @@ object JsonSchemaHelper extends Logging with AsScalaConverters {
         validationResult match {
           case Some(res) if res.isEmpty => f
           case Some(res)                =>
-            logger.info(s"[JsonSchemaHelper][applySchemaValidation] [${res.toString}]")
+            logger.error(s"[JsonSchemaHelper][applySchemaValidation] [${res.toString}]")
             Future.successful(BadRequest(Json.toJson(ErrorResponse(List(FailureMessage.InvalidJson)))))
           case _                        => Future.successful(BadRequest(Json.toJson(ErrorResponse(List(FailureMessage.MissingBody)))))
         }
