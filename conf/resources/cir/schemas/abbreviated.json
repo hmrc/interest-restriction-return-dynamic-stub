@@ -51,7 +51,6 @@
     },
     "parentCompany": {
       "type": "object",
-      "additionalProperties": false,
       "oneOf": [
         {
           "properties": {
@@ -229,6 +228,55 @@
         },
         "activeInterestAllowanceAlternativeCalculation": {
           "type": "boolean"
+        },
+        "interestAllowanceNonConsolidatedInvestment": {
+          "type": "object",
+          "required": ["isElected"],
+          "properties": {
+            "isElected": { "type": "boolean" },
+            "nonConsolidatedInvestments": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 2147483647,
+              "items": {
+                "type": "object",
+                "required": ["investmentName"],
+                "properties": {
+                  "investmentName": {
+                    "type": "string",
+                    "pattern": "^[ -~¢-¥©®±×÷‐₠-₿−-∝≈≠≣-≥]{1,5000}$"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "interestAllowanceConsolidatedPartnership": {
+          "type": "object",
+          "required": ["isElected", "isActive"],
+          "properties": {
+            "isElected": { "type": "boolean" },
+            "isActive": { "type": "boolean" },
+            "consolidatedPartnerships": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 2147483647,
+              "items": {
+                "type": "object",
+                "required": ["partnershipName"],
+                "properties": {
+                  "partnershipName": {
+                    "type": "string",
+                    "pattern": "^[ -~¡-ÿĀ-ʯḀ-ỿ‐-―‘-‟₠-₿ÅK]{1,160}$"
+                  },
+                  "sautr": {
+                    "type": "string",
+                    "pattern": "^[0-9]{10}$"
+                  }
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -300,3 +348,4 @@
     }
   }
 }
+
